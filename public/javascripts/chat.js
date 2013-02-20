@@ -1,4 +1,4 @@
-var socket = io.connect('http://192.168.1.39:3000');
+var socket = io.connect(window.location.hostname);
 
 socket.on('news', function (data) {
   console.log(data);
