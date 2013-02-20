@@ -1,0 +1,21 @@
+extends layout
+
+block scripts
+  script(src='/javascripts/socket.io.min.js')
+  script(src='/javascripts/chat.js')
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+  div
+    b Users
+    #users
+
+  div
+    #conversation
+    input#data
+    input#datasend(type='button', value='Send')
+
+
+
