@@ -20,10 +20,15 @@ exports.io = function(server) {
     });
 
     socket.on('joinchat', function (username) {
-      console.log('Joining chat');
+      console.log('Joining chat: ' + socket.username);
+      if (socket.username != undefined) {
+        delete usernames[socket.username];
+        socket.emit('updatechat', 'SERVER', socket.username + ' changed name to ' +  username);
+      } else {
+        socket.emit('updatechat', 'SERVER', username + ' connected');
+      }
       socket.username = username;
       usernames[username] = username;
-      socket.emit('updatechat', 'SERVER', username + ' connected');
       io.sockets.emit('updateusers', usernames);
     });
 
