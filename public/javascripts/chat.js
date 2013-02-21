@@ -1,26 +1,3 @@
-var socket = io.connect(window.location.hostname);
-
-socket.on('news', function (data) {
-  console.log(data);
-  socket.emit('my other event', { my: 'data' });
-});
-
-
-socket.on('connect', function() {
-  socket.emit('adduser', prompt('What is your name?'));
-});
-
-socket.on('updatechat', function (username, msg) {
-  $('#conversation').append('<b>'+username + ':</b> ' + msg + '<br>'); 
-});
-
-socket.on('updateusers', function(data) {
-  $('#users').empty();
-  $.each(data, function(key, value) {
-    $('#users').append('<div>' + key + '</div>');
-  });
-});
-
 $(function(){
   $('#datasend').click( function() {
 
@@ -37,3 +14,21 @@ $(function(){
     }
   });
 });
+
+var socket = io.connect(window.location.hostname);
+
+socket.on('connect', function() {
+  socket.emit('joinchat', prompt('What is your name?'));
+});
+
+socket.on('updatechat', function (username, msg) {
+  $('#conversation').append('<b>'+username + ':</b> ' + msg + '<br>'); 
+});
+
+socket.on('updateusers', function(data) {
+  $('#users').empty();
+  $.each(data, function(key, value) {
+    $('#users').append('<div>' + key + '</div>');
+  });
+});
+
