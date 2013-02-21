@@ -1,30 +1,32 @@
 $(function(){
-  bindSendMessage();
-  bindSendMessageWithEnter();
   var socket = connectSocket();
   bindSocketActions(socket);
-  checkNotificationSupport();
+  bindSendMessage();
+  bindSendMessageWithEnter();
+  // checkNotificationSupport();
   checkNotificationPermissions();
+  focusOnMsgField();
 });
 
 function bindSendMessage() {
-  $('#datasend').click( function() {
-    var message = $('#data').val();
-    $('#data').val('');
+  $('#msgsend').click( function() {
+    var message = $('#msg').val();
+    $('#msg').val('');
     socket.emit('sendchat', message);
   });
 }
 
 function bindSendMessageWithEnter() {
-  $('#data').keypress(function(e) {
+  $('#msg').keypress(function(e) {
     if(e.which == 13) {  // Enter -button
       $(this).blur();
-      $('#datasend').focus().click();
+      $('#msgsend').focus().click();
     }
   });
 }
 
 function checkNotificationPermissions() {
+  console.log('checking permissions');
   if (window.webkitNotifications.checkPermission() == 0) { // 0 is PERMISSION_ALLOWED
     // function defined in step 2
     window.webkitNotifications.createNotification(
@@ -61,4 +63,8 @@ function checkNotificationSupport() {
   } else {
     console.log("Notifications are not supported for this Browser/OS version yet.");
   }
+}
+
+function focusOnMsgField() {
+  $('#msg').focus();
 }
