@@ -1,6 +1,6 @@
 $(function(){
-  var socket = connectSocket();
-  bindSocketActions(socket);
+  connectSocket();
+  bindSocketActions();
   bindUserNameActions();
   bindSendMessage(socket);
   bindSendMessageWithEnter();
@@ -9,7 +9,13 @@ $(function(){
   focusOnMsgField();
   setSendChatButton();
 });
-var username = '';
+var username = '',
+    socket;
+
+function connectSocket() {
+  socket = io.connect(window.location.hostname);
+}
+
 
 function bindUserNameActions() {
   $('input#saveName').click( function()  {
@@ -17,6 +23,7 @@ function bindUserNameActions() {
     username = $('input#name').val();
     $('span#username').html(username);
     setSendChatButton();
+    joinChat();
   });
 }
 
@@ -62,16 +69,11 @@ function checkNotificationPermissions() {
   }  
 }
 
-function connectSocket() {
-  return io.connect(window.location.hostname);
+function joinChat() {
+  socket.emit('joinchat', username); //prompt('What is your name?')
 }
 
-function bindSocketActions(socket) {
-  socket.on('connect', function() {
-    var username = 'Piet';
-    socket.emit('joinchat', username); //prompt('What is your name?')
-  });
-
+function bindSocketActions() {
   socket.on('updatechat', function (username, msg) {
     $('#conversation').append('<b>'+username + ':</b> ' + msg + '<br>');
     displayNotificationInUnfocused(username, msg);
@@ -81,8 +83,7 @@ function bindSocketActions(socket) {
     $('#users').empty();
     $.each(data, function(key, value) {
       $('#users').append('<div>' + key + '</div>');
-    });
-    
+    }); 
   });
 }
 

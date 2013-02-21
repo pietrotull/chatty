@@ -13,11 +13,14 @@ exports.io = function(server) {
   configure(io);
 
   io.sockets.on('connection', function (socket) {
+    console.log('Connected');
+
     socket.on('sendchat', function (data) {
       io.sockets.emit('updatechat', socket.username, data);
     });
 
     socket.on('joinchat', function (username) {
+      console.log('Joining chat');
       socket.username = username;
       usernames[username] = username;
       socket.emit('updatechat', 'SERVER', username + ' connected');
