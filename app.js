@@ -6,7 +6,7 @@ var express = require('express'),
     user = require('./routes/user'), 
     http = require('http'), 
     path = require('path'),
-    chat = require('./chatengine');
+    chatengine = require('./chatengine');
 
 var app = express(),
     server;
@@ -34,4 +34,4 @@ server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
-chat.io(server);
+chatengine.io(server);

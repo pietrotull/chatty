@@ -1,7 +1,7 @@
 var socketio = require('socket.io');
 
 function configure(io) {
-  return io.configure(function () { 
+  io.configure(function () { 
     io.set("transports", ["xhr-polling"]); 
     io.set("polling duration", 10); 
   });
@@ -10,7 +10,7 @@ function configure(io) {
 exports.io = function(server) {
   var io = socketio.listen(server),
       usernames = {};
-  io = configure(io);
+  configure(io);
 
   io.sockets.on('connection', function (socket) {
     socket.on('sendchat', function (data) {
