@@ -9,13 +9,22 @@ block content
   p Welcome to #{title}
 
   div
+    input#name
+    input#saveName(type='button', value='SetName') 
+
+  br
+
+  div
     b Users
     #users
 
   div
     #conversation
-    input#msg
-    input#msgsend(type='button', value='Send')
+    
+    div
+      span#username Piet
+      input#msg
+      input#msgsend(type='button', value='Send')
     br
     input#notification(type='button', value='Enable notifications')
 

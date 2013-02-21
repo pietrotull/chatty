@@ -1,12 +1,36 @@
 $(function(){
   var socket = connectSocket();
   bindSocketActions(socket);
+  bindUserNameActions();
   bindSendMessage(socket);
   bindSendMessageWithEnter();
   // checkNotificationSupport();
   bindCheckNotificationPermissions();
   focusOnMsgField();
+  setSendChatButton();
 });
+var username = '';
+
+function bindUserNameActions() {
+  $('input#saveName').click( function()  {
+    console.log('saveName');
+    username = $('input#name').val();
+    $('span#username').html(username);
+    setSendChatButton();
+  });
+}
+
+function setSendChatButton() {
+  if(isValidUsername(username)) {
+    $('input#msgsend').removeAttr('disabled');
+  } else {
+    $('input#msgsend').attr('disabled', 'disabled');
+  }
+}
+
+function isValidUsername(username) {
+  return username !== null && username !== undefined && username !== '';
+}
 
 function bindSendMessage(socket) {
   $('#msgsend').click( function() {
