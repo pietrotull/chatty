@@ -1,14 +1,14 @@
 $(function(){
   var socket = connectSocket();
   bindSocketActions(socket);
-  bindSendMessage();
+  bindSendMessage(socket);
   bindSendMessageWithEnter();
   // checkNotificationSupport();
-  checkNotificationPermissions();
+  bindCheckNotificationPermissions();
   focusOnMsgField();
 });
 
-function bindSendMessage() {
+function bindSendMessage(socket) {
   $('#msgsend').click( function() {
     var message = $('#msg').val();
     $('#msg').val('');
@@ -25,12 +25,14 @@ function bindSendMessageWithEnter() {
   });
 }
 
+function bindCheckNotificationPermissions() {
+  $('#notification').click( function() {
+    checkNotificationPermissions();
+  });
+}
+
 function checkNotificationPermissions() {
-  console.log('checking permissions');
   if (window.webkitNotifications.checkPermission() == 0) { // 0 is PERMISSION_ALLOWED
-    // function defined in step 2
-    window.webkitNotifications.createNotification(
-        'icon.png', 'Notification Title', 'Notification content...');
   } else {
     window.webkitNotifications.requestPermission();
   }  
@@ -42,11 +44,13 @@ function connectSocket() {
 
 function bindSocketActions(socket) {
   socket.on('connect', function() {
-    socket.emit('joinchat', prompt('What is your name?'));
+    var username = 'Piet';
+    socket.emit('joinchat', username); //prompt('What is your name?')
   });
 
   socket.on('updatechat', function (username, msg) {
-    $('#conversation').append('<b>'+username + ':</b> ' + msg + '<br>'); 
+    $('#conversation').append('<b>'+username + ':</b> ' + msg + '<br>');
+    displayNotificationInUnfocused(username, msg);
   });
 
   socket.on('updateusers', function(data) {
@@ -54,7 +58,25 @@ function bindSocketActions(socket) {
     $.each(data, function(key, value) {
       $('#users').append('<div>' + key + '</div>');
     });
+    
   });
+}
+
+function displayNotificationInUnfocused(title, msg) {
+  if (!document.hasFocus()) {
+    createNewMessageNotification(title, msg);
+  }
+}
+
+function createNewMessageNotification(title, content) {
+  notification = window.webkitNotifications.createNotification(
+        'http://upload.wikimedia.org/wikipedia/en/thumb/a/ac/Zorroandbernardo.jpg/250px-Zorroandbernardo.jpg', 
+        title, 
+        content);
+  notification.show();
+  setTimeout(function(){
+    notification.cancel()
+  }, 5000);
 }
 
 function checkNotificationSupport() {
