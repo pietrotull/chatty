@@ -1,0 +1,34 @@
+extends layout
+
+block scripts
+  script(src='/javascripts/socket.io.min.js')
+  script(src='/javascripts/chat.js')
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+  div
+    input#name
+    input#saveName(type='button', value='SetName') 
+
+  br
+
+  div
+    b Users
+    #users
+
+    each msg, i in messages
+      b #{msg.username}: 
+      |  #{msg.msg}
+      br
+
+  div
+    #conversation
+    
+    div
+      span#username anynomous
+      input#msg
+      input#msgsend(type='button', value='Send')
+    br
+    input#notification(type='button', value='Enable notifications')
