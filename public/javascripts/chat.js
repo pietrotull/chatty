@@ -1,5 +1,6 @@
 $(function(){
   connectSocket();
+  checkForExistingUsername();
   bindSocketActions();
   bindUserNameActions();
   bindSendMessage(socket);
@@ -15,12 +16,25 @@ function connectSocket() {
   socket = io.connect(window.location.hostname);
 }
 
+function checkForExistingUsername() {
+  username = localStorage['username'];
+  if (isValidUsername(username)) {
+    $('input#name').val(username);
+    joinChat(username);
+  }
+  setSendChatButton();
+}
+
+function joinChat() {
+  setSendChatButton();
+  socket.emit('joinchat', username); //prompt('What is your name?')
+  $('span#username').html(username);
+}
 
 function bindUserNameActions() {
   $('input#saveName').click( function()  {
     username = $('input#name').val();
-    $('span#username').html(username);
-    setSendChatButton();
+    localStorage['username'] = username;
     joinChat();
   });
 }
@@ -65,10 +79,6 @@ function checkNotificationPermissions() {
   } else {
     window.webkitNotifications.requestPermission();
   }  
-}
-
-function joinChat() {
-  socket.emit('joinchat', username); //prompt('What is your name?')
 }
 
 function bindSocketActions() {
