@@ -6,21 +6,18 @@ var socketio = require('socket.io'),
 exports.io = function(server) {
   io = socketio.listen(server);
 
-  // configure();
+  // configure(); // for heroku, because it does not support web sockets
   io.sockets.on('connection', function (socket) {
 
     socket.on('sendchat', function (msg) {
-      io.sockets.emit('updatechat', socket.username, msg);
-      db.messages.save({username: socket.username, msg: msg});
+      processNewChatMessage(socket.username, msg);
     });
 
     socket.on('joinchat', function (username) {
       joinChat(socket, username);
-      db.messages.save({username: 'SYSTEM', msg: username + ' joined'});
     });
 
     socket.on('disconnect', function() {
-      db.messages.save({username: 'SYSTEM', msg: socket.username + ' left'});
       disconnectUser(socket);
     });
   });
@@ -33,13 +30,22 @@ function configure() {
   });
 }
 
+function processNewChatMessage(username, msg) {
+  io.sockets.emit('updatechat', username, msg);
+  db.messages.save({username: username, msg: msg});  
+}
+
 function joinChat(socket, username) {
+  var msg = '';
   if (socket.username != undefined) {
     delete usernames[socket.username];
-    socket.emit('updatechat', 'SERVER', socket.username + ' changed name to ' +  username);
+    msg = socket.username + ' changed name to ' +  username;
   } else {
-    socket.emit('updatechat', 'SERVER', username + ' connected');
+    msg = username + ' connected';
   }
+  socket.emit('updatechat', 'SERVER', msg);
+  db.messages.save({username: 'SYSTEM', msg: msg});
+
   socket.username = username;
   usernames[username] = username;
   io.sockets.emit('updateusers', usernames);
@@ -48,5 +54,6 @@ function joinChat(socket, username) {
 function disconnectUser(socket) {
   delete usernames[socket.username];
   io.sockets.emit('updateusers', usernames);
+  db.messages.save({username: 'SYSTEM', msg: socket.username + ' left'});
   socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has left the building');
 }
