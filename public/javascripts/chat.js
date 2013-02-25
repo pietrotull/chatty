@@ -4,7 +4,6 @@ $(function(){
   bindUserNameActions();
   bindSendMessage(socket);
   bindSendMessageWithEnter();
-  // checkNotificationSupport();
   bindCheckNotificationPermissions();
   focusOnMsgField();
   setSendChatButton();
@@ -19,7 +18,6 @@ function connectSocket() {
 
 function bindUserNameActions() {
   $('input#saveName').click( function()  {
-    console.log('saveName');
     username = $('input#name').val();
     $('span#username').html(username);
     setSendChatButton();

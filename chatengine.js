@@ -1,22 +1,26 @@
 var socketio = require('socket.io'),
+    db = require("./database.js"),
     usernames = {},
     io;
 
 exports.io = function(server) {
   io = socketio.listen(server);
 
-  configure();
+  // configure();
   io.sockets.on('connection', function (socket) {
 
     socket.on('sendchat', function (msg) {
       io.sockets.emit('updatechat', socket.username, msg);
+      db.messages.save({username: socket.username, msg: msg});
     });
 
     socket.on('joinchat', function (username) {
       joinChat(socket, username);
+      db.messages.save({username: 'SYSTEM', msg: username + ' joined'});
     });
 
     socket.on('disconnect', function() {
+      db.messages.save({username: 'SYSTEM', msg: socket.username + ' left'});
       disconnectUser(socket);
     });
   });
