@@ -19,9 +19,9 @@ block content
     #users
 
     each msg, i in messages
-      b #{msg.username}: 
-      |  #{msg.msg}
-      br
+      div.msg
+        div.profile #{msg.username}: 
+        | #{msg.msg}
 
   div
     #conversation
