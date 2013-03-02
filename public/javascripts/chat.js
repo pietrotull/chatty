@@ -75,8 +75,7 @@ function bindCheckNotificationPermissions() {
 }
 
 function checkNotificationPermissions() {
-  if (window.webkitNotifications.checkPermission() == 0) { // 0 is PERMISSION_ALLOWED
-  } else {
+  if (!window.webkitNotifications.checkPermission() == 0) { // 0 is PERMISSION_ALLOWED
     window.webkitNotifications.requestPermission();
   }  
 }
@@ -84,7 +83,7 @@ function checkNotificationPermissions() {
 function bindSocketActions() {
   socket.on('updatechat', function (username, msg) {
     $('#conversation').append('<b>'+username + ':</b> ' + msg + '<br>');
-    displayNotificationInUnfocused(username, msg);
+    displayNotificationIfUnfocused(username, msg);
   });
 
   socket.on('updateusers', function(data) {
@@ -95,7 +94,7 @@ function bindSocketActions() {
   });
 }
 
-function displayNotificationInUnfocused(title, msg) {
+function displayNotificationIfUnfocused(title, msg) {
   if (!document.hasFocus()) {
     createNewMessageNotification(title, msg);
   }
