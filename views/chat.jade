@@ -18,13 +18,13 @@ block content
     b Users
     #users
 
-    each msg, i in messages
-      div.msg
-        div.profile #{msg.username}: 
-        | #{msg.msg}
-
   div
     #conversation
+      each msg, i in messages
+        div.msg
+          div.profile #{msg.username}: 
+          | #{msg.msg}
+
     
     div
       span#username anynomous
