@@ -8,7 +8,10 @@ $(function(){
   bindCheckNotificationPermissions();
   focusOnMsgField();
   setSendChatButton();
+  // $('div#header').width($(window).width() - 30);
 });
+
+
 var username = '',
     socket;
 

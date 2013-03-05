@@ -4,14 +4,13 @@ block scripts
   script(src='/javascripts/socket.io.min.js')
   script(src='/javascripts/chat.js')
 
-block content
-  h1= title
-  p Welcome to #{title}
-
-  div
+block header
+  div#logo Chatty
+  div#nameForm
     input#name
     input#saveName(type='button', value='SetName') 
 
+block content
   br
 
   div
