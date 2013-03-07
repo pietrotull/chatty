@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  br 
+  p Topics
+
+  div#topics
+    each topic, i in topics
+      div.topic
+        | #{topic.topic}  
+        | #{topic.author}
+  br
+  div#createNewTopic
+    | New topic
+    br
+    input#topic
+    br
+    | Description
+    br
+    textarea#description
+    br
+    button#submitNewTopic Save
