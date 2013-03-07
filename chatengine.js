@@ -32,7 +32,7 @@ function configure() {
 
 function processNewChatMessage(username, msg) {
   io.sockets.emit('updatechat', username, msg);
-  db.messages.save({username: username, msg: msg});  
+  insertMsgToDb(username, msg);
 }
 
 function joinChat(socket, username) {
@@ -44,7 +44,7 @@ function joinChat(socket, username) {
     msg = username + ' connected';
   }
   socket.emit('updatechat', 'SERVER', msg);
-  db.messages.save({username: 'SYSTEM', msg: msg});
+  insertMsgToDb('SYSTEM', msg);
 
   socket.username = username;
   usernames[username] = username;
@@ -54,6 +54,10 @@ function joinChat(socket, username) {
 function disconnectUser(socket) {
   delete usernames[socket.username];
   io.sockets.emit('updateusers', usernames);
-  db.messages.save({username: 'SYSTEM', msg: socket.username + ' left'});
+  insertMsgToDb('SYSTEM', socket.username + ' left');
   socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has left the building');
+}
+
+function insertMsgToDb(user, msg) {
+  db.messages.save({username: user, msg: msg, date: Date.now()});
 }

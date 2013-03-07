@@ -1,11 +1,19 @@
 doctype 5
 html
   head
-    title= title
+    title Chatty.MB
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js')
+    script(src='/javascripts/socket.io.min.js')
+    script(src='/javascripts/client.js')
     block scripts
+
   body
     div#header
-      block header
+      div#logo 
+        a(href='/') Chatty.MB
+      div#nameForm
+        input#name
+        input#saveName(type='button', value='SetName') 
+
     block content

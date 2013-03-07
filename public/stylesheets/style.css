@@ -4,10 +4,6 @@ body {
   background-color: #333355;
 }
 
-a {
-  color: #00B7FF;
-}
-
 div#logo {
   font-size: 20px;
   display: inline-block;
@@ -38,13 +34,17 @@ div#header {
   border-radius: 0px 0px 5px 5px;
 }
 
+a {
+  text-decoration: none;
+}
+
 div.msg:nth-child(even) {
   background-color: #DDDDEE;
 }
 
 div.profile {
   font-weight: bold;
-  width: 100px;
+  width: 120px;
   display: inline-block;
   border-right: 1px dotted;
   margin-right: 5px;

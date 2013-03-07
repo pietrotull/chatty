@@ -1,17 +1,6 @@
 extends layout
 
-block scripts
-  script(src='/javascripts/socket.io.min.js')
-  script(src='/javascripts/chat.js')
-
-block header
-  div#logo Chatty
-  div#nameForm
-    input#name
-    input#saveName(type='button', value='SetName') 
-
 block content
-  br
 
   div
     b Users
@@ -21,7 +10,7 @@ block content
     #conversation
       each msg, i in messages
         div.msg
-          div.profile #{msg.username}: 
+          div.profile [#{asDate(msg.date)}] #{msg.username} 
           | #{msg.msg}
 
     
