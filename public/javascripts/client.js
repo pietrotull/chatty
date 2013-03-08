@@ -8,10 +8,12 @@ $(function(){
   bindCheckNotificationPermissions();
   focusOnMsgField();
   setSendChatButton();
+  bindAddNewTopic();
 });
 
 
 var username = '',
+    topic = '',
     socket;
 
 function connectSocket() {
@@ -22,14 +24,14 @@ function checkForExistingUsername() {
   username = localStorage['username'];
   if (isValidUsername(username)) {
     $('input#name').val(username);
-    joinChat(username);
+    joinChat();
   }
-  setSendChatButton();
+  // setSendChatButton();
 }
 
 function joinChat() {
   setSendChatButton();
-  socket.emit('joinchat', username); //prompt('What is your name?')
+  socket.emit('join', topic, username); //prompt('What is your name?')
   $('span#username').html(username);
 }
 
@@ -94,6 +96,10 @@ function bindSocketActions() {
       $('#users').append('<div>' + key + '</div>');
     }); 
   });
+
+  socket.on('addnewtopic', function(topic) {
+    console.log('new topic', topic);
+  });
 }
 
 function displayNotificationIfUnfocused(title, msg) {
@@ -113,14 +119,16 @@ function createNewMessageNotification(title, content) {
   }, 5000);
 }
 
-function checkNotificationSupport() {
-  if (window.webkitNotifications) {
-    console.log("Notifications are supported!");
-  } else {
-    console.log("Notifications are not supported for this Browser/OS version yet.");
-  }
-}
-
 function focusOnMsgField() {
   $('#msg').focus();
+}
+
+function bindAddNewTopic() {
+  $('button#submitNewTopic').click(function() {
+    var topic = {};
+    topic.title = $('input#topic').val();
+    topic.description = $('textarea#description').val();
+    topic.name = $('input#name').val();
+    socket.emit('addnewtopic', topic);
+  });
 }

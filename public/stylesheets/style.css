@@ -64,4 +64,6 @@ div.profile {
   height: 60px;
 }
 
-
+.topicAuthor {
+  float: right;
+}

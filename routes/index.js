@@ -8,7 +8,7 @@ exports.chat = function(req, res) {
       console.log('Err: ', err);
       return;
     } 
-    res.render('chat', { messages: messages, asDate: formatDate });
+    res.render('chat', { messages: messages, asTime: asTime });
   });
 };
 
@@ -18,11 +18,16 @@ exports.topic = function(req, res) {
       console.log('Err: ', err);
       return;
     } 
-    res.render('topics', { topics: topics, asDate: formatDate });
+    res.render('topics', { topics: topics, asDate: asDate, asTime: asTime });
   });
 };
 
-function formatDate(timestamp) {
+function asTime(timestamp) {
   var date = new Date(timestamp);
   return date.getHours() + ':' + date.getMinutes();  
+}
+
+function asDate(timestamp) {
+  var date = new Date(timestamp);
+  return date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();  
 }

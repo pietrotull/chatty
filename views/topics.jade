@@ -7,8 +7,14 @@ block content
   div#topics
     each topic, i in topics
       div.topic.baseDiv
-        | #{topic.topic}  
-        | #{topic.author}
+        div.topicAuthor 
+          | Created #{asDate(topic.date)} at #{asTime(topic.date)}
+          br
+          | by #{topic.name}
+        b #{topic.title}  
+        br 
+        | #{topic.description}
+
   br
   div#createNewTopic.baseDiv
     | New topic:

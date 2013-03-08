@@ -9,7 +9,7 @@ block content
   div#conversation
     each msg, i in messages
       div.msg.baseDiv
-        div.profile [#{asDate(msg.date)}] #{msg.username} 
+        div.profile [#{asTime(msg.date)}] #{msg.username} 
         | #{msg.msg}
 
   div
