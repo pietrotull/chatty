@@ -9,6 +9,7 @@ $(function(){
   focusOnMsgField();
   setSendChatButton();
   bindAddNewTopic();
+  bindTopicLinks();
 });
 
 
@@ -130,5 +131,12 @@ function bindAddNewTopic() {
     topic.description = $('textarea#description').val();
     topic.name = $('input#name').val();
     socket.emit('addnewtopic', topic);
+  });
+}
+
+function bindTopicLinks() {
+  $('div.topic').click(function(element) {
+    console.log('clicked: ', element.target.id);
+    window.location = '/topic/' + element.target.id;
   });
 }

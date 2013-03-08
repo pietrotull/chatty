@@ -66,4 +66,22 @@ div.profile {
 
 .topicAuthor {
   float: right;
+  font-size: 12px;
+}
+
+#breadcrumbs {
+  background-color: #ABABFF;
+  border-radius: 5px;
+  width: auto;
+  padding: 5px 10px;
+  margin: 2px;
+  font-weight: bold;
+}
+
+.id {
+  display: none;
+}
+
+.topic {
+  cursor: pointer;
 }

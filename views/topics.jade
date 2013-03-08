@@ -1,12 +1,10 @@
 extends layout
 
 block content
-  br 
-  p Topics
 
   div#topics
     each topic, i in topics
-      div.topic.baseDiv
+      div.topic.baseDiv(id='#{topic._id}')
         div.topicAuthor 
           | Created #{asDate(topic.date)} at #{asTime(topic.date)}
           br
