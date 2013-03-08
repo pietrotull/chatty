@@ -78,10 +78,10 @@ div.profile {
   font-weight: bold;
 }
 
-.id {
-  display: none;
-}
-
 .topic {
   cursor: pointer;
+}
+
+.hidden {
+  display: none;
 }

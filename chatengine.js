@@ -31,6 +31,8 @@ exports.io = function(server) {
 function addNewTopic(topic) {
   console.log(topic);
   insertNewTopicToDb(topic);
+  topic.asTime = asTime(topic.date);
+  topic.asDate = asDate(topic.date);
   io.sockets.emit('addnewtopic', topic);
 }
 
@@ -107,4 +109,14 @@ function insertMsgToDb(user, msg) {
 function insertNewTopicToDb(topic) {
   topic.date = Date.now();
   db.topics.save(topic);
+}
+
+function asTime(timestamp) {
+  var date = new Date(timestamp);
+  return date.getHours() + ':' + date.getMinutes();  
+}
+
+function asDate(timestamp) {
+  var date = new Date(timestamp);
+  return date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();  
 }

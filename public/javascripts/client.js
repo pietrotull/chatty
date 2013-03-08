@@ -12,7 +12,6 @@ $(function(){
   bindTopicLinks();
 });
 
-
 var username = '',
     topic = '',
     socket;
@@ -99,7 +98,7 @@ function bindSocketActions() {
   });
 
   socket.on('addnewtopic', function(topic) {
-    console.log('new topic', topic);
+    addNewTopicTemplate(topic);
   });
 }
 
@@ -139,4 +138,19 @@ function bindTopicLinks() {
     console.log('clicked: ', element.target.id);
     window.location = '/topic/' + element.target.id;
   });
+}
+
+function addNewTopicTemplate(topic) {
+  var topicHtml = 
+  '<div id="' + topic._id + '" class="topic baseDiv hidden">' +
+  ' <div class="topicAuthor">Created ' + topic.asDate + ' at ' + 
+      topic.asTime + '<br/>' + 
+  '   By ' + topic.name +   
+  ' </div>' + 
+  ' <b>' + topic.title + '</b><br/>' +
+      topic.description + 
+  '</div>';
+  $('#topics').append(topicHtml);
+  var selector = 'div#'+topic._id;
+  $(selector).slideDown();
 }

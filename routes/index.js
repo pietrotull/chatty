@@ -27,6 +27,8 @@ function asTime(timestamp) {
   return date.getHours() + ':' + date.getMinutes();  
 }
 
+exports.asTime = asTime;
+
 function asDate(timestamp) {
   var date = new Date(timestamp);
   return date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();  
