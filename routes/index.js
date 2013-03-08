@@ -1,16 +1,21 @@
 var db = require("../database.js");
 
 exports.chat = function(req, res) {
-  console.log('id: ' + req.params.id);
 
-  db.messages.find(function(err, messages) {
-    if(err) {
-      console.log('Err: ', err);
-      return;
-    } 
-    res.render('chat', { messages: messages, asTime: asTime });
+  var topicId = db.ObjectId(req.params.id);
+  db.topics.findOne({ "_id" : topicId }, function(err, topic) {
+    if(err) return;
+    db.messages.find(function(err, messages) {
+      if(err) {
+        console.log('Err: ', err);
+        return;
+      } 
+      res.render('chat', { topic: topic, messages: messages, asDate: asDate, asTime: asTime });
+    });  
   });
 };
+
+// function 
 
 exports.topic = function(req, res) {
   db.topics.find(function(err, topics) {
@@ -26,8 +31,6 @@ function asTime(timestamp) {
   var date = new Date(timestamp);
   return date.getHours() + ':' + date.getMinutes();  
 }
-
-exports.asTime = asTime;
 
 function asDate(timestamp) {
   var date = new Date(timestamp);

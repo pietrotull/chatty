@@ -1,6 +1,18 @@
 extends layout
 
+block breadcrump
+  span #{topic.title}
+
 block content
+
+  div.topic.baseDiv(id='#{topic._id}')
+    div.topicAuthor 
+      | Created #{asDate(topic.date)} at #{asTime(topic.date)}
+      br
+      | by #{topic.name}
+    b #{topic.title}  
+    br 
+    | #{topic.description}
 
   div.baseDiv
     b Users

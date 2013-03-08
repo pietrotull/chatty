@@ -11,25 +11,28 @@ exports.io = function(server) {
   io.sockets.on('connection', function (socket) {
 
     socket.on('addnewtopic', function (topic) {
+      console.log('socket::addNewTopic', topic);
       addNewTopic(topic);
     });
 
-    socket.on('sendchat', function (msg) {
+    socket.on('jointopic', function (topic, username) {
+      console.log('socket::jointopic', topic);
+      jointopic(socket, topic, username);
+    });
+
+    socket.on('sendmsg', function (msg) {
+      console.log('socket::sendmsg', topic);
       processNewChatMessage(socket.username, msg);
     });
 
-    socket.on('join', function (topic, username) {
-      join(socket, topic, username);
-    });
-
     socket.on('disconnect', function() {
+      console.log('socket::disconnect');
       disconnectUser(socket);
     });
   });
 };
 
 function addNewTopic(topic) {
-  console.log(topic);
   insertNewTopicToDb(topic);
   topic.asTime = asTime(topic.date);
   topic.asDate = asDate(topic.date);
@@ -43,12 +46,7 @@ function configure() {
   });
 }
 
-function processNewChatMessage(username, msg) {
-  io.sockets.emit('updatechat', username, msg);
-  insertMsgToDb(username, msg);
-}
-
-function join(socket, topic, username) {
+function jointopic(socket, topic, username) {
   var currentTopic = validateTopic(topic);
   socket.topic = currentTopic;
   socket.join(currentTopic);
@@ -86,6 +84,11 @@ function join(socket, topic, username) {
   */
 }
 
+function processNewChatMessage(username, msg) {
+  io.sockets.emit('updatechat', username, msg);
+  insertMsgToDb(username, msg);
+}
+
 function validateTopic(topic)  {
   // TODO: check that topicsList contains given topic
   return topic ? topic : rootTopic;
@@ -103,7 +106,8 @@ function disconnectUser(socket) {
 }
 
 function insertMsgToDb(user, msg) {
-  db.messages.save({username: user, msg: msg, date: Date.now()});
+  console.log('Save msg by: ' + user, msg);
+  // db.messages.save({username: user, msg: msg, date: Date.now()});
 }
 
 function insertNewTopicToDb(topic) {
