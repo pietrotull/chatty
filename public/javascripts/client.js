@@ -21,7 +21,7 @@ function connectSocket() {
 }
 
 function bindSocketActions() {
-  socket.on('updatechat', function (username, msg) {
+  socket.on('updatetopic', function (username, msg) {
     $('#conversation').append('<div class="msg baseDiv"><div class="profile">'+username + ':</div> ' + msg + '</div>');
     // displayNotificationIfUnfocused(username, msg);
   });
@@ -42,7 +42,7 @@ function bindSocketActions() {
 
 function joinTopic() {
   setSendChatButton();
-  topic = $('div.topic').attr('id');
+  topic = $('span.hidden').attr('id'); // what if we go to topic view?
   socket.emit('jointopic', topic, username); //prompt('What is your name?')
   console.log('Joining Topic: ', topic);
   $('span#username').html(username);
@@ -61,7 +61,7 @@ function bindUserNameActions() {
   $('input#saveName').click( function()  {
     username = $('input#name').val();
     localStorage['username'] = username;
-    joinChat();
+    joinTopic();
   });
 }
 

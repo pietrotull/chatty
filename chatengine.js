@@ -21,8 +21,8 @@ exports.io = function(server) {
     });
 
     socket.on('sendmsg', function (msg) {
-      console.log('socket::sendmsg', topic);
-      processNewChatMessage(socket.username, msg);
+      console.log('socket::sendmsg', socket.topic);
+      processNewChatMessage(socket.username, socket.topic, msg);
     });
 
     socket.on('disconnect', function() {
@@ -48,6 +48,7 @@ function configure() {
 
 function jointopic(socket, topic, username) {
   var currentTopic = validateTopic(topic);
+  console.log('valitaded: ' + currentTopic);
   socket.topic = currentTopic;
   socket.join(currentTopic);
   var msg = '';
@@ -57,25 +58,18 @@ function jointopic(socket, topic, username) {
   } else {
     msg = username + ' connected';
   }
-  socket.emit('updatechat', 'SERVER', msg);
+  socket.emit('updatechat', 'SERVER', msg + '(' + currentTopic + ')');
   insertMsgToDb('SYSTEM', msg);
   socket.username = username;
   usernames[username] = username;
   io.sockets.emit('updateusers', usernames);
-
+  socket.broadcast.to(currentTopic).emit('updatechat', 'SERVER', msg);
+  
   if (isRoot(currentTopic)) {
 
   }
 
   /*
-    // store the username in the socket session for this client
-    socket.username = username;
-    // store the room name in the socket session for this client
-    socket.room = 'room1';
-    // add the client's username to the global list
-    usernames[username] = username;
-    // send client to room 1
-    socket.join('room1');
     // echo to client they've connected
     socket.emit('updatechat', 'SERVER', 'you have connected to room1');
     // echo to room 1 that a person has connected to their room
@@ -84,8 +78,8 @@ function jointopic(socket, topic, username) {
   */
 }
 
-function processNewChatMessage(username, msg) {
-  io.sockets.emit('updatechat', username, msg);
+function processNewChatMessage(username, topic, msg) {
+  io.sockets.in(topic).emit('updatetopic', username, msg);
   insertMsgToDb(username, msg);
 }
 

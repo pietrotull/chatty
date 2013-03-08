@@ -5,6 +5,8 @@ block breadcrump
 
 block content
 
+  span.hidden(id='#{topic._id}')
+
   div.topic.baseDiv(id='#{topic._id}')
     div.topicAuthor 
       | Created #{asDate(topic.date)} at #{asTime(topic.date)}
