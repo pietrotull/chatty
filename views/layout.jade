@@ -3,17 +3,21 @@ html
   head
     title Chatty.MB
     link(rel='stylesheet', href='/stylesheets/style.css')
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js')
     script(src='/javascripts/socket.io.min.js')
     script(src='/javascripts/client.js')
     block scripts
 
   body
     div#header
-      div#logo 
+      div#logo.headerSubDiv 
         a(href='/') Chatty.MB
-      div#nameForm
+      input#notification(type='button', value='Enable notifications')
+
+      div#nameForm.headerSubDiv
         input#name
         input#saveName(type='button', value='SetName') 
+
+    br
 
     block content

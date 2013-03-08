@@ -6,17 +6,21 @@ block content
 
   div#topics
     each topic, i in topics
-      div.topic
+      div.topic.baseDiv
         | #{topic.topic}  
         | #{topic.author}
   br
-  div#createNewTopic
-    | New topic
+  div#createNewTopic.baseDiv
+    | New topic:
     br
-    input#topic
+    input#topic(placeholder="New topic title")
     br
-    | Description
+    | Description:
     br
-    textarea#description
+    textarea#description(placeholder="Description what this topic is about")
+    br
+    | Author:
+    br
+    input#name(placeholder="Author")
     br
     button#submitNewTopic Save

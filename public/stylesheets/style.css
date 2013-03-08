@@ -4,24 +4,33 @@ body {
   background-color: #333355;
 }
 
-div#logo {
-  font-size: 20px;
+.headerSubDiv {
   display: inline-block;
   padding: 5px 10px;
+}
+
+div#logo {
+  font-size: 20px;
 }
 
 div#nameForm {
   display: inline-block; 
   position: absolute;
-  padding: 5px 10px;
   right: 0px;
 }
 
-div.msg, #users {
+.baseDiv {
   background-color: #BBBBCC;
   padding: 5px 10px;
   margin: 2px;
   border-radius: 5px;
+}
+
+div.msg, #users {
+}
+
+div.msg:nth-child(even) {
+  background-color: #DDDDEE;
 }
 
 div#header {
@@ -38,10 +47,6 @@ a {
   text-decoration: none;
 }
 
-div.msg:nth-child(even) {
-  background-color: #DDDDEE;
-}
-
 div.profile {
   font-weight: bold;
   width: 120px;
@@ -49,3 +54,14 @@ div.profile {
   border-right: 1px dotted;
   margin-right: 5px;
 }
+
+#createNewTopic input, textarea {
+  width: 350px;
+  resize: none; 
+}
+
+#createNewTopic textarea {
+  height: 60px;
+}
+
+

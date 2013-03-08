@@ -84,7 +84,7 @@ function checkNotificationPermissions() {
 
 function bindSocketActions() {
   socket.on('updatechat', function (username, msg) {
-    $('#conversation').append('<div class="msg"><div class="profile">'+username + ':</div> ' + msg + '</div>');
+    $('#conversation').append('<div class="msg baseDiv"><div class="profile">'+username + ':</div> ' + msg + '</div>');
     displayNotificationIfUnfocused(username, msg);
   });
 
