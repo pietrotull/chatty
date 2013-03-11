@@ -26,7 +26,8 @@ div#nameForm {
   border-radius: 5px;
 }
 
-div.msg, #users {
+#users {
+  margin: 0px;
 }
 
 div.msg:nth-child(even) {

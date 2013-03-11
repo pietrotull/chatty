@@ -30,21 +30,15 @@ function bindSocketActions() {
     addNewTopicTemplate(topic);
   });
 
-  /*
-  socket.on('updateusers', function(data) {
-    $('#users').empty();
-    $.each(data, function(key, value) {
-      $('#users').append('<div>' + key + '</div>');
-    }); 
+  socket.on('updateusers', function(users) {
+    updateUsers(users);
   });
-  */
 }
 
 function joinTopic() {
   setSendChatButton();
   topic = $('span.hidden').attr('id'); // what if we go to topic view?
   socket.emit('jointopic', topic, username); //prompt('What is your name?')
-  console.log('Joining Topic: ', topic);
   $('span#username').html(username);
 }
 
@@ -54,7 +48,6 @@ function checkForExistingUsername() {
     $('input#name').val(username);
     joinTopic();
   }
-  // setSendChatButton();
 }
 
 function bindUserNameActions() {
@@ -141,8 +134,11 @@ function bindAddNewTopic() {
 
 function bindTopicLinks() {
   $('div.topic').click(function(element) {
-    console.log('clicked: ', element.target.id);
-    window.location = '/topic/' + element.target.id;
+    if (element.target.id == null || element.target.id == '' || element.target.id == undefined) {
+      console.log('NULL ID', element.target);
+    } else {
+      window.location = '/topic/' + element.target.id;
+    }
   });
 }
 
@@ -162,12 +158,25 @@ function addNewTopicTemplate(topic) {
 }
 
 function updateTopic(msg) {
-  console.log('msg: ' +  msg.content);
   var msgHtml = $(
   '<div class="msg baseDiv hidden">' + 
   ' <div class="profile"> [' + msg.asTime + '] ' + msg.username + '</div>' + msg.content + 
   '</div>');
   $('#conversation').append(msgHtml);
   msgHtml.slideDown(200);
-  // $('#conversation').append('<div class="msg baseDiv"><div class="profile">'+username + ':</div> ' + msg + '</div>');
 };
+
+function updateUsers(users) {
+
+  if (topic == undefined) {
+    console.log('Undefined topic');
+  } else {
+    console.log('Topic is: ' + topic);
+  }
+
+  var usersOnlineInThisTopic = users[topic]
+  $('#users').empty();
+  $.each(usersOnlineInThisTopic, function(key, value) {
+    $('#users').append('<li>' + key + '</li>');
+  });
+}

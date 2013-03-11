@@ -50,6 +50,8 @@ function joinTopic(socket, topic, username) {
   socket.topic = currentTopic;
   socket.join(currentTopic);
   var msg = '';
+
+  /*
   if (socket.username != undefined) {
     delete usernames[socket.username];
     msg = socket.username + ' changed name to ' +  username;
@@ -57,22 +59,22 @@ function joinTopic(socket, topic, username) {
     msg = username + ' connected';
   }
   socket.emit('updatechat', 'SERVER', msg + '(' + currentTopic + ')');
+  */
   socket.username = username;
-  usernames[username] = username;
-  io.sockets.emit('updateusers', usernames);
+
   socket.broadcast.to(currentTopic).emit('updatechat', 'SERVER', msg);
   
   if (isRoot(currentTopic)) {
-
+    console.log('Joining Root');
+  } else {
+    socket.broadcast.to(currentTopic).emit('updatechat', 'SERVER', username + ' has connected to this room');
   }
 
-  /*
-    // echo to client they've connected
-    socket.emit('updatechat', 'SERVER', 'you have connected to room1');
-    // echo to room 1 that a person has connected to their room
-    socket.broadcast.to('room1').emit('updatechat', 'SERVER', username + ' has connected to this room');
-    socket.emit('updaterooms', rooms, 'room1');
-  */
+  if (usernames[currentTopic] == null) {
+    usernames[currentTopic] = {};
+  }
+  usernames[currentTopic][username] = username;
+  io.sockets.emit('updateusers', usernames);
 }
 
 function processNewChatMessage(username, topic, msgContent) {
@@ -93,7 +95,9 @@ function isRoot(topic) {
 }
 
 function disconnectUser(socket) {
-  delete usernames[socket.username];
+  if (socket.topic !== undefined) {
+    delete usernames[socket.topic][socket.username];
+  }
   io.sockets.emit('updateusers', usernames);
   socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has left the building');
 }
