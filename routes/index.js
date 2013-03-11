@@ -5,7 +5,8 @@ exports.chat = function(req, res) {
   var topicId = db.ObjectId(req.params.id);
   db.topics.findOne({ "_id" : topicId }, function(err, topic) {
     if(err) return;
-    db.messages.find(function(err, messages) {
+    
+    db.messages.find({ "topicId" : req.params.id},function(err, messages) {
       if(err) {
         console.log('Err: ', err);
         return;

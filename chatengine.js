@@ -11,7 +11,6 @@ exports.io = function(server) {
   io.sockets.on('connection', function (socket) {
 
     socket.on('addnewtopic', function (topic) {
-      console.log('socket::addNewTopic', topic);
       addNewTopic(topic);
     });
 
@@ -48,7 +47,6 @@ function configure() {
 
 function jointopic(socket, topic, username) {
   var currentTopic = validateTopic(topic);
-  console.log('valitaded: ' + currentTopic);
   socket.topic = currentTopic;
   socket.join(currentTopic);
   var msg = '';
@@ -59,7 +57,7 @@ function jointopic(socket, topic, username) {
     msg = username + ' connected';
   }
   socket.emit('updatechat', 'SERVER', msg + '(' + currentTopic + ')');
-  insertMsgToDb('SYSTEM', msg);
+  // insertMsgToDb('SYSTEM', msg);
   socket.username = username;
   usernames[username] = username;
   io.sockets.emit('updateusers', usernames);
@@ -80,7 +78,7 @@ function jointopic(socket, topic, username) {
 
 function processNewChatMessage(username, topic, msg) {
   io.sockets.in(topic).emit('updatetopic', username, msg);
-  insertMsgToDb(username, msg);
+  insertMsgToDb(username, topic, msg);
 }
 
 function validateTopic(topic)  {
@@ -95,13 +93,13 @@ function isRoot(topic) {
 function disconnectUser(socket) {
   delete usernames[socket.username];
   io.sockets.emit('updateusers', usernames);
-  insertMsgToDb('SYSTEM', socket.username + ' left');
+  // insertMsgToDb('SYSTEM', socket.username + ' left');
   socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has left the building');
 }
 
-function insertMsgToDb(user, msg) {
-  console.log('Save msg by: ' + user, msg);
-  // db.messages.save({username: user, msg: msg, date: Date.now()});
+function insertMsgToDb(user, topicId, msg) {
+  console.log('DB::Save msg by: ' + user, topicId, msg);
+  db.messages.save({username: user, topicId: topicId, msg: msg, date: Date.now()});
 }
 
 function insertNewTopicToDb(topic) {
