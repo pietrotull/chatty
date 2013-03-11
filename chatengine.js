@@ -51,28 +51,16 @@ function joinTopic(socket, topic, username) {
   socket.join(currentTopic);
   var msg = '';
 
-  /*
-  if (socket.username != undefined) {
-    delete usernames[socket.username];
-    msg = socket.username + ' changed name to ' +  username;
-  } else {
-    msg = username + ' connected';
-  }
-  socket.emit('updatechat', 'SERVER', msg + '(' + currentTopic + ')');
-  */
-  socket.username = username;
-
   socket.broadcast.to(currentTopic).emit('updatechat', 'SERVER', msg);
   
-  if (isRoot(currentTopic)) {
-    console.log('Joining Root');
-  } else {
+  if (!isRoot(currentTopic)) {
     socket.broadcast.to(currentTopic).emit('updatechat', 'SERVER', username + ' has connected to this room');
   }
 
   if (usernames[currentTopic] == null) {
     usernames[currentTopic] = {};
   }
+  socket.username = username;
   usernames[currentTopic][username] = username;
   io.sockets.emit('updateusers', usernames);
 }
@@ -103,7 +91,6 @@ function disconnectUser(socket) {
 }
 
 function insertMsgToDb(user, topicId, msg) {
-  console.log(msg);
   db.messages.save({username: user, topicId: db.ObjectId(topicId), content: msg.content, date: msg.date });
 }
 

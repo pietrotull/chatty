@@ -23,7 +23,7 @@ function connectSocket() {
 function bindSocketActions() {
   socket.on('updatetopic', function (msg) {
     updateTopic(msg);
-    // displayNotificationIfUnfocused(username, msg);
+    displayNotificationIfUnfocused(username, msg);
   });
 
   socket.on('addnewtopic', function(topic) {
@@ -132,16 +132,6 @@ function bindAddNewTopic() {
   });
 }
 
-function bindTopicLinks() {
-  $('div.topic').click(function(element) {
-    if (element.target.id == null || element.target.id == '' || element.target.id == undefined) {
-      console.log('NULL ID', element.target);
-    } else {
-      window.location = '/topic/' + element.target.id;
-    }
-  });
-}
-
 function addNewTopicTemplate(topic) {
   var topicHtml = 
   '<div id="' + topic._id + '" class="topic baseDiv hidden">' +
@@ -167,16 +157,19 @@ function updateTopic(msg) {
 };
 
 function updateUsers(users) {
-
-  if (topic == undefined) {
-    console.log('Undefined topic');
-  } else {
-    console.log('Topic is: ' + topic);
-  }
-
   var usersOnlineInThisTopic = users[topic]
   $('#users').empty();
   $.each(usersOnlineInThisTopic, function(key, value) {
     $('#users').append('<li>' + key + '</li>');
+  });
+}
+
+function bindTopicLinks() {
+  $('div.topic').click(function(element) {
+    var topicId = element.target.id;
+    if (topicId == null || topicId == '' || topicId == undefined) { // if clicks msg title
+      var topicId = element.target.parentNode.id;
+    }
+    window.location = '/topic/' + topicId;
   });
 }
