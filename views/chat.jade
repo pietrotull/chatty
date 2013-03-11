@@ -26,7 +26,7 @@ block content
         div.profile [#{asTime(msg.date)}] #{msg.username} 
         | #{msg.msg}
 
-  div
-    span#username anynomous
+  div.highlightRow
+    span#username.profile anynomous
     input#msg
     input#msgsend(type='button', value='Send')
