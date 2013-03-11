@@ -10,6 +10,7 @@ $(function(){
   setSendChatButton();
   bindAddNewTopic();
   bindTopicLinks();
+  setNameRowClock(); // update once a minute
 });
 
 var username = '',
@@ -173,3 +174,13 @@ function bindTopicLinks() {
     window.location = '/topic/' + topicId;
   });
 }
+
+function setNameRowClock() {
+  var now = new Date(),
+    time = now.getHours() + ':' + now.getMinutes();
+  $('#clock').html(time);
+  setInterval(setNameRowClock, 60 * 1000);
+}
+
+
+
