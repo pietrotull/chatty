@@ -20,12 +20,10 @@ exports.io = function(server) {
     });
 
     socket.on('sendmsg', function (msg) {
-      console.log('socket::sendmsg', socket.topic);
       processNewChatMessage(socket.username, socket.topic, msg);
     });
 
     socket.on('disconnect', function() {
-      console.log('socket::disconnect');
       disconnectUser(socket);
     });
   });
@@ -50,11 +48,9 @@ function joinTopic(socket, topic, username) {
   socket.topic = currentTopic;
   socket.join(currentTopic);
   var msg = '';
-
-  socket.broadcast.to(currentTopic).emit('updatechat', 'SERVER', msg);
   
   if (!isRoot(currentTopic)) {
-    socket.broadcast.to(currentTopic).emit('updatechat', 'SERVER', username + ' has connected to this room');
+    broadcastServerMsg(socket, currentTopic, username + ' has connected to this topic');
   }
 
   if (usernames[currentTopic] == null) {
@@ -87,7 +83,15 @@ function disconnectUser(socket) {
     delete usernames[socket.topic][socket.username];
   }
   io.sockets.emit('updateusers', usernames);
-  socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has left the building');
+  broadcastServerMsg(socket, socket.topic, socket.username + ' has left the building');
+}
+
+function broadcastServerMsg(socket, currentTopic, usermsg) {
+  socket.broadcast.to(currentTopic).emit('updatetopic', {
+    username: 'SERVER', 
+    content: usermsg, 
+    asTime: dateUtil.asTime(Date.now())
+  });
 }
 
 function insertMsgToDb(user, topicId, msg) {
