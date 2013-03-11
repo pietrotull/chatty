@@ -21,8 +21,8 @@ function connectSocket() {
 }
 
 function bindSocketActions() {
-  socket.on('updatetopic', function (username, msg) {
-    $('#conversation').append('<div class="msg baseDiv"><div class="profile">'+username + ':</div> ' + msg + '</div>');
+  socket.on('updatetopic', function (msg) {
+    updateTopic(msg);
     // displayNotificationIfUnfocused(username, msg);
   });
 
@@ -160,3 +160,14 @@ function addNewTopicTemplate(topic) {
   var selector = 'div#'+topic._id;
   $(selector).slideDown();
 }
+
+function updateTopic(msg) {
+  console.log('msg: ' +  msg.content);
+  var msgHtml = $(
+  '<div class="msg baseDiv hidden">' + 
+  ' <div class="profile"> [' + msg.asTime + '] ' + msg.username + ':</div> ' + msg.content + 
+  '</div>');
+  $('#conversation').append(msgHtml);
+  msgHtml.slideDown(200);
+  // $('#conversation').append('<div class="msg baseDiv"><div class="profile">'+username + ':</div> ' + msg + '</div>');
+};

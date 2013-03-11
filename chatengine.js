@@ -16,8 +16,7 @@ exports.io = function(server) {
     });
 
     socket.on('jointopic', function (topic, username) {
-      console.log('socket::jointopic', topic);
-      jointopic(socket, topic, username);
+      joinTopic(socket, topic, username);
     });
 
     socket.on('sendmsg', function (msg) {
@@ -46,7 +45,7 @@ function configure() {
   });
 }
 
-function jointopic(socket, topic, username) {
+function joinTopic(socket, topic, username) {
   var currentTopic = validateTopic(topic);
   socket.topic = currentTopic;
   socket.join(currentTopic);
@@ -58,7 +57,6 @@ function jointopic(socket, topic, username) {
     msg = username + ' connected';
   }
   socket.emit('updatechat', 'SERVER', msg + '(' + currentTopic + ')');
-  // insertMsgToDb('SYSTEM', msg);
   socket.username = username;
   usernames[username] = username;
   io.sockets.emit('updateusers', usernames);
@@ -77,9 +75,12 @@ function jointopic(socket, topic, username) {
   */
 }
 
-function processNewChatMessage(username, topic, msg) {
-  io.sockets.in(topic).emit('updatetopic', username, msg);
+function processNewChatMessage(username, topic, msgContent) {
+
+  var timestamp = Date.now();
+  var msg = { username: username, content: msgContent, date: timestamp, asTime: dateUtil.asTime(timestamp) };
   insertMsgToDb(username, topic, msg);
+  io.sockets.in(topic).emit('updatetopic', msg);
 }
 
 function validateTopic(topic)  {
@@ -94,13 +95,12 @@ function isRoot(topic) {
 function disconnectUser(socket) {
   delete usernames[socket.username];
   io.sockets.emit('updateusers', usernames);
-  // insertMsgToDb('SYSTEM', socket.username + ' left');
   socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has left the building');
 }
 
 function insertMsgToDb(user, topicId, msg) {
-  console.log('DB::Save msg by: ' + user, topicId, msg);
-  db.messages.save({username: user, topicId: db.ObjectId(topicId), msg: msg, date: Date.now()});
+  console.log(msg);
+  db.messages.save({username: user, topicId: db.ObjectId(topicId), content: msg.content, date: msg.date });
 }
 
 function insertNewTopicToDb(topic) {

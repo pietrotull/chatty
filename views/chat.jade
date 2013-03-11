@@ -24,7 +24,7 @@ block content
     each msg, i in messages
       div.msg.baseDiv
         div.profile [#{asTime(msg.date)}] #{msg.username} 
-        | #{msg.msg}
+        | #{msg.content}
 
   div.highlightRow
     span#username.profile anynomous
