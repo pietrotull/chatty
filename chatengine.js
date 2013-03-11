@@ -1,5 +1,6 @@
 var socketio = require('socket.io'),
     db = require("./database.js"),
+    dateUtil = require("./dateUtil.js"),
     usernames = {},
     rootTopic = 'root',
     io;
@@ -33,8 +34,8 @@ exports.io = function(server) {
 
 function addNewTopic(topic) {
   insertNewTopicToDb(topic);
-  topic.asTime = asTime(topic.date);
-  topic.asDate = asDate(topic.date);
+  topic.asTime = dateUtil.asTime(topic.date);
+  topic.asDate = dateUtil.asDate(topic.date);
   io.sockets.emit('addnewtopic', topic);
 }
 
@@ -99,20 +100,10 @@ function disconnectUser(socket) {
 
 function insertMsgToDb(user, topicId, msg) {
   console.log('DB::Save msg by: ' + user, topicId, msg);
-  db.messages.save({username: user, topicId: topicId, msg: msg, date: Date.now()});
+  db.messages.save({username: user, topicId: db.ObjectId(topicId), msg: msg, date: Date.now()});
 }
 
 function insertNewTopicToDb(topic) {
   topic.date = Date.now();
   db.topics.save(topic);
-}
-
-function asTime(timestamp) {
-  var date = new Date(timestamp);
-  return date.getHours() + ':' + date.getMinutes();  
-}
-
-function asDate(timestamp) {
-  var date = new Date(timestamp);
-  return date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();  
 }

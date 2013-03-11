@@ -1,22 +1,27 @@
-var db = require("../database.js");
+var db = require('../database.js'),
+  dateUtil = require('../dateUtil.js');
 
 exports.chat = function(req, res) {
 
   var topicId = db.ObjectId(req.params.id);
   db.topics.findOne({ "_id" : topicId }, function(err, topic) {
-    if(err) return;
-    
-    db.messages.find({ "topicId" : req.params.id},function(err, messages) {
+    if(err) { 
+      console.log('1Err: ', err);
+      return;
+    }
+
+    db.messages.find({ "topicId" : topicId},function(err, messages) {
       if(err) {
-        console.log('Err: ', err);
+        console.log('2Err: ', err);
         return;
       } 
-      res.render('chat', { topic: topic, messages: messages, asDate: asDate, asTime: asTime });
+      res.render('chat', { topic: topic, 
+        messages: messages, 
+        asDate: dateUtil.asDate, 
+        asTime: dateUtil.asTime });
     });  
   });
 };
-
-// function 
 
 exports.topic = function(req, res) {
   db.topics.find(function(err, topics) {
@@ -24,16 +29,8 @@ exports.topic = function(req, res) {
       console.log('Err: ', err);
       return;
     } 
-    res.render('topics', { topics: topics, asDate: asDate, asTime: asTime });
+    res.render('topics', { topics: topics, 
+      asDate: dateUtil.asDate,
+      asTime: dateUtil.asTime });
   });
 };
-
-function asTime(timestamp) {
-  var date = new Date(timestamp);
-  return date.getHours() + ':' + date.getMinutes();  
-}
-
-function asDate(timestamp) {
-  var date = new Date(timestamp);
-  return date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();  
-}
