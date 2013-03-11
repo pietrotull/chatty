@@ -165,7 +165,7 @@ function updateTopic(msg) {
   console.log('msg: ' +  msg.content);
   var msgHtml = $(
   '<div class="msg baseDiv hidden">' + 
-  ' <div class="profile"> [' + msg.asTime + '] ' + msg.username + ':</div> ' + msg.content + 
+  ' <div class="profile"> [' + msg.asTime + '] ' + msg.username + '</div>' + msg.content + 
   '</div>');
   $('#conversation').append(msgHtml);
   msgHtml.slideDown(200);
