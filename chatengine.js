@@ -29,6 +29,7 @@ exports.io = function(server) {
   });
 };
 
+
 function addNewTopic(topic) {
   insertNewTopicToDb(topic);
   topic.asTime = dateUtil.asTime(topic.date);
@@ -48,7 +49,12 @@ function joinTopic(socket, topic, username) {
   socket.topic = currentTopic;
   socket.join(currentTopic);
   var msg = '';
-  
+
+  if (socket.username && username !=  socket.username) {
+    console.log('Changing name from ' + socket.username + ' to ' + username);
+    delete usernames[currentTopic][socket.username];
+  }
+
   if (!isRoot(currentTopic)) {
     broadcastServerMsg(socket, currentTopic, username + ' has connected to this topic');
   }
@@ -62,9 +68,13 @@ function joinTopic(socket, topic, username) {
 }
 
 function processNewChatMessage(username, topic, msgContent) {
-
-  var timestamp = Date.now();
-  var msg = { username: username, content: msgContent, date: timestamp, asTime: dateUtil.asTime(timestamp) };
+  var timestamp = Date.now(),
+    msg = { 
+    username: username, 
+    content: msgContent, 
+    date: timestamp, 
+    asTime: dateUtil.asTime(timestamp) 
+  };
   insertMsgToDb(username, topic, msg);
   io.sockets.in(topic).emit('updatetopic', msg);
 }

@@ -23,7 +23,7 @@ function connectSocket() {
 function bindSocketActions() {
   socket.on('updatetopic', function (msg) {
     updateTopic(msg);
-    displayNotificationIfUnfocused(username, msg);
+    displayNotificationIfUnfocused(msg.username, msg.content);
   });
 
   socket.on('addnewtopic', function(topic) {
