@@ -86,3 +86,18 @@ a {
 .hidden {
   display: none;
 }
+
+input[type='button'] {
+  border-radius: 6px;
+  border: 1px solid #222299;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #BBBBCC), color-stop(1, #A9A9CC));
+  color: #222299;
+  /* text-shadow:1px 1px 0px #4444BB; */
+}
+input[type='button']:hover {
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #A9A9CC), color-stop(1, #BBBBCC));
+}
+input[type='button']:active {
+  background: none;
+  background-color: #A9A9CC; 
+}
