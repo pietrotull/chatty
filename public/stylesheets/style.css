@@ -2,6 +2,7 @@ body {
   padding: 15px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background-color: #333355;
+  color: #111155;
 }
 
 .headerSubDiv {
@@ -50,7 +51,7 @@ a {
 
 .profile {
   font-weight: bold;
-  width: 120px;
+  width: 135px;
   display: inline-block;
   border-right: 1px dotted;
   margin-right: 5px;
@@ -95,9 +96,9 @@ input[type='button'] {
   /* text-shadow:1px 1px 0px #4444BB; */
 }
 input[type='button']:hover {
-  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #A9A9CC), color-stop(1, #BBBBCC));
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #A9A9BB), color-stop(1, #AAAABB));
 }
 input[type='button']:active {
   background: none;
-  background-color: #A9A9CC; 
+  background-color: #9999BB; 
 }
