@@ -4,12 +4,13 @@ $(function(){
   bindSocketActions();
   bindUserNameActions();
   bindSendMessage(socket);
-  bindSendMessageWithEnter();
+  // bindSendMessageWithEnter();
   bindCheckNotificationPermissions();
   focusOnMsgField();
   setSendChatButton();
   bindAddNewTopic();
   bindTopicLinks();
+  bindEnterSubmitForInputFields();
   setNameRowClock(); // update once a minute
 });
 
@@ -79,15 +80,6 @@ function bindSendMessage(socket) {
   });
 }
 
-function bindSendMessageWithEnter() {
-  $('#msg').keypress(function(e) {
-    if(e.which == 13) {  // Enter -button
-      $(this).blur();
-      $('#msgsend').focus().click();
-    }
-  });
-}
-
 function bindCheckNotificationPermissions() {
   $('#notification').click( function() {
     checkNotificationPermissions();
@@ -122,7 +114,7 @@ function focusOnMsgField() {
 }
 
 function bindAddNewTopic() {
-  $('button#submitNewTopic').click(function() {
+  $('input#submitNewTopic').click(function() {
     var topic = {};
     topic.title = $('input#topic').val();
     topic.description = $('textarea#description').val();
@@ -182,5 +174,22 @@ function setNameRowClock() {
   setInterval(setNameRowClock, 60 * 1000);
 }
 
+function bindEnterSubmitForInputFields() {
+  $('input, textarea').keypress(function(e) {
+    if(e.which == 13) {  // Enter -button
+      var sisterSubmit = $(this).siblings('[type="button"]');
+      console.log('ENTER: ', sisterSubmit.attr('id'));
+      $(this).blur();
+      sisterSubmit.focus().click();
+    }
+  });
+}
 
-
+function bindSendMessageWithEnter() {
+  $('#msg').keypress(function(e) {
+    if(e.which == 13) {  // Enter -button
+      $(this).blur();
+      $('#msgsend').focus().click();
+    }
+  });
+}
