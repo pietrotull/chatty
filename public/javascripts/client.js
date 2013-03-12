@@ -71,14 +71,6 @@ function isValidUsername(username) {
   return username !== null && username !== undefined && username !== '';
 }
 
-function bindSendMessage(socket) {
-  $('#msgsend').click( function() {
-    var message = $('#msg').val();
-    $('#msg').val('');
-    socket.emit('sendmsg', message);
-  });
-}
-
 function bindCheckNotificationPermissions() {
   $('#notification').click( function() {
     checkNotificationPermissions();
@@ -111,18 +103,6 @@ function createNewMessageNotification(title, content) {
 
 function focusOnMsgField() {
   $('#msg').focus();
-}
-
-function bindAddNewTopic() {
-  $('input#submitNewTopic').click(function() {
-    var topic = {};
-    topic.title = $('input#topic').val();
-    topic.description = $('textarea#description').val();
-    topic.name = $('input#name').val();
-    socket.emit('addnewtopic', topic);
-    $('input#topic').val('');
-    $('textarea#description').val('');
-  });
 }
 
 function addNewTopicTemplate(topic) {
@@ -183,44 +163,54 @@ function bindEnterSubmitForInputFields() {
       var sisterSubmit = $(this).siblings('[type="button"]');
       $(this).blur();
       validateInputs(sisterSubmit, submitButton, displayFlashMsg);
-      /*
-      if (validateInputs(sisterSubmit)) {
-        sisterSubmit.focus().click();
-      } else {
-        // TODO: print error?
-      }
-      */
-      //TODO: call validation here
     }
   });
 }
 
 function displayFlashMsg(field) {
-  console.log('validation error' + field);
+  console.log('validation error' + field); // show error some where
 }
 
 function submitButton(button) {
-  console.log('success: ' + button);
   button.focus().click();
 }
 
 function validateInputs(button, success, failure) {
-
   var fields = $(button).siblings('textarea, input[type="text"]');
   $.each(fields, function(key, field) {
     var value = $(field).val();
     if(value == null || value == '' || value == undefined) {
-      console.log('failed');    
-      // return false;
       failure(field);
       return;
     }
-    console.log('passed');
     success(button);
-    return true; // not working!
+    return;
   });
 }
 
 function pad(number) {
   return (1e15+number+"").slice(-2);
+}
+
+function bindSendMessage(socket) {
+  $('#msgsend').click(function() {
+    validateInputs('#msgsend', function() {
+      var message = $('#msg').val();
+      $('#msg').val('');
+      socket.emit('sendmsg', message);
+    }, displayFlashMsg);
+  });
+}
+
+function bindAddNewTopic() {
+  $('input#submitNewTopic').click(function() {
+    var topic = {};
+    topic.title = $('input#topic').val();
+    topic.description = $('textarea#description').val();
+    topic.name = $('input#name').val();
+    // validateInputs
+    socket.emit('addnewtopic', topic);
+    $('input#topic').val('');
+    $('textarea#description').val('');
+  });
 }
