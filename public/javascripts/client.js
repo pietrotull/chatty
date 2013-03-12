@@ -4,7 +4,6 @@ $(function(){
   bindSocketActions();
   bindUserNameActions();
   bindSendMessage(socket);
-  // bindSendMessageWithEnter();
   bindCheckNotificationPermissions();
   focusOnMsgField();
   setSendChatButton();
@@ -98,6 +97,7 @@ function displayNotificationIfUnfocused(title, msg) {
   }
 }
 
+// hard coded notificition icon for moment
 function createNewMessageNotification(title, content) {
   notification = window.webkitNotifications.createNotification(
         'http://upload.wikimedia.org/wikipedia/en/thumb/a/ac/Zorroandbernardo.jpg/250px-Zorroandbernardo.jpg', 
@@ -167,9 +167,10 @@ function bindTopicLinks() {
   });
 }
 
+// update once a minute the clock on new msg row
 function setNameRowClock() {
   var now = new Date(),
-    time = now.getHours() + ':' + now.getMinutes();
+    time = pad(now.getHours()) + ':' + pad(now.getMinutes());
   $('#clock').html(time);
   setInterval(setNameRowClock, 60 * 1000);
 }
@@ -178,18 +179,12 @@ function bindEnterSubmitForInputFields() {
   $('input, textarea').keypress(function(e) {
     if(e.which == 13) {  // Enter -button
       var sisterSubmit = $(this).siblings('[type="button"]');
-      console.log('ENTER: ', sisterSubmit.attr('id'));
       $(this).blur();
       sisterSubmit.focus().click();
     }
   });
 }
 
-function bindSendMessageWithEnter() {
-  $('#msg').keypress(function(e) {
-    if(e.which == 13) {  // Enter -button
-      $(this).blur();
-      $('#msgsend').focus().click();
-    }
-  });
+function pad(number) {
+  return (1e15+number+"").slice(-2);
 }

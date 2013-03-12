@@ -58,7 +58,7 @@ a {
 
 #createNewTopic input, textarea {
   width: 350px;
-  resize: none; 
+  resize: none;
 }
 
 #createNewTopic textarea {
