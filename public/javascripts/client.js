@@ -150,11 +150,13 @@ function updateTopic(msg) {
 };
 
 function updateUsers(users) {
-  var usersOnlineInThisTopic = users[topic]
-  $('#users').empty();
-  $.each(usersOnlineInThisTopic, function(key, value) {
-    $('#users').append('<li>' + key + '</li>');
-  });
+  if (topic) {
+    var usersOnlineInThisTopic = users[topic];
+    $('#users').empty();
+    $.each(usersOnlineInThisTopic, function(key, value) {
+      $('#users').append('<li>' + key + '</li>');
+    });
+  } 
 }
 
 function bindTopicLinks() {
@@ -170,7 +172,7 @@ function bindTopicLinks() {
 // update once a minute the clock on new msg row
 function setNameRowClock() {
   var now = new Date(),
-    time = pad(now.getHours()) + ':' + pad(now.getMinutes());
+    time = pad(now.getHours()) + ':' + pad(now.getMinutes())  ;
   $('#clock').html(time);
   setInterval(setNameRowClock, 60 * 1000);
 }
@@ -180,8 +182,42 @@ function bindEnterSubmitForInputFields() {
     if(e.which == 13) {  // Enter -button
       var sisterSubmit = $(this).siblings('[type="button"]');
       $(this).blur();
-      sisterSubmit.focus().click();
+      validateInputs(sisterSubmit, submitButton, displayFlashMsg);
+      /*
+      if (validateInputs(sisterSubmit)) {
+        sisterSubmit.focus().click();
+      } else {
+        // TODO: print error?
+      }
+      */
+      //TODO: call validation here
     }
+  });
+}
+
+function displayFlashMsg(field) {
+  console.log('validation error' + field);
+}
+
+function submitButton(button) {
+  console.log('success: ' + button);
+  button.focus().click();
+}
+
+function validateInputs(button, success, failure) {
+
+  var fields = $(button).siblings('textarea, input[type="text"]');
+  $.each(fields, function(key, field) {
+    var value = $(field).val();
+    if(value == null || value == '' || value == undefined) {
+      console.log('failed');    
+      // return false;
+      failure(field);
+      return;
+    }
+    console.log('passed');
+    success(button);
+    return true; // not working!
   });
 }
 
