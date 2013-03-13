@@ -88,13 +88,13 @@ a {
   display: none;
 }
 
-input {
+input, textarea {
   border-radius: 4px;
   border:2px solid #7777ee;
   padding: 2px 4px; 
 }
 
-input:focus {
+input:focus, textarea:focus {
   outline:none;
   border-color:#aaaaed;
   box-shadow: 0px 0px 6px #cacaed;

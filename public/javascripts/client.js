@@ -175,7 +175,7 @@ function displayFlashMsg(field) {
 }
 
 function validateInputs(button, success, failure) {
-  // $('textarea, input').removeClass('error'); // remove previous errors
+  $('textarea, input').removeClass('error'); // remove previous errors
   var fields = $(button).siblings('textarea, input[type="text"]');
   $.each(fields, function(key, field) {
     var value = $(field).val();
