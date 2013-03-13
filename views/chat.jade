@@ -5,16 +5,7 @@ block breadcrump
 
 block content
 
-  span.hidden(id='#{topic._id}')
-
-  div.topic.baseDiv(id='#{topic._id}')
-    div.topicAuthor 
-      | Created #{asDate(topic.date)} at #{asTime(topic.date)}
-      br
-      | by #{topic.name}
-    b #{topic.title}  
-    br 
-    | #{topic.description}
+  include topicDiv
 
   div.baseDiv
     b Users
