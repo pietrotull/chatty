@@ -54,8 +54,10 @@ function checkForExistingUsername() {
 function bindUserNameActions() {
   $('input#saveName').click( function()  {
     username = $('input#name').val();
-    localStorage['username'] = username;
-    joinTopic();
+    validateInputs(this, function() {
+      localStorage['username'] = username;
+      joinTopic();      
+    }, displayFlashMsg);
   });
 }
 
@@ -162,20 +164,18 @@ function bindEnterSubmitForInputFields() {
     if(e.which == 13) {  // Enter -button
       var sisterSubmit = $(this).siblings('[type="button"]');
       $(this).blur();
-      validateInputs(sisterSubmit, submitButton, displayFlashMsg);
+      sisterSubmit.focus().click();     
     }
   });
 }
 
 function displayFlashMsg(field) {
   console.log('validation error' + field); // show error some where
-}
-
-function submitButton(button) {
-  button.focus().click();
+  $(field).addClass('error');
 }
 
 function validateInputs(button, success, failure) {
+  // $('textarea, input').removeClass('error'); // remove previous errors
   var fields = $(button).siblings('textarea, input[type="text"]');
   $.each(fields, function(key, field) {
     var value = $(field).val();
@@ -208,9 +208,10 @@ function bindAddNewTopic() {
     topic.title = $('input#topic').val();
     topic.description = $('textarea#description').val();
     topic.name = $('input#name').val();
-    // validateInputs
-    socket.emit('addnewtopic', topic);
-    $('input#topic').val('');
-    $('textarea#description').val('');
+    validateInputs('input#submitNewTopic', function() {
+      socket.emit('addnewtopic', topic);
+      $('input#topic').val('');
+      $('textarea#description').val('');
+    }, displayFlashMsg);
   });
 }
