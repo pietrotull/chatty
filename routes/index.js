@@ -34,3 +34,16 @@ exports.topic = function(req, res) {
       asTime: dateUtil.asTime });
   });
 };
+
+// start of new one page version of ui
+exports.main = function(req, res) {
+  db.topics.find(function(err, topics) {
+    if(err) {
+      console.log('Err: ', err);
+      return;
+    } 
+    res.render('index', { topics: topics, 
+      asDate: dateUtil.asDate,
+      asTime: dateUtil.asTime });
+  });
+};

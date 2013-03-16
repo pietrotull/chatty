@@ -1,0 +1,26 @@
+extends onepagelayout
+
+block breadcrump
+  span Topics (v2)
+
+block content
+
+  div#topics
+    each topic, i in topics
+      include topicDiv
+
+  br
+  div#createNewTopic.baseDiv
+    | New topic:
+    br
+    input#topic(placeholder="New topic title")
+    br
+    | Description:
+    br
+    textarea#description(placeholder="Description what this topic is about")
+    br
+    | Author:
+    br
+    input#name(placeholder="Author")
+    br
+    input#submitNewTopic(type='button', value='Save')

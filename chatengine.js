@@ -20,7 +20,7 @@ exports.io = function(server) {
     });
 
     socket.on('sendmsg', function (msg) {
-      processNewChatMessage(socket.username, socket.topic, msg);
+      processNewChatMessage(socket, msg);
     });
 
     socket.on('disconnect', function() {
@@ -50,7 +50,7 @@ function joinTopic(socket, topic, username) {
   socket.join(currentTopic);
   var msg = '';
 
-  if (socket.username && username !=  socket.username) {
+  if (socket.username && username != socket.username) {
     console.log('Changing name from ' + socket.username + ' to ' + username);
     delete usernames[currentTopic][socket.username];
   }
@@ -59,24 +59,35 @@ function joinTopic(socket, topic, username) {
     broadcastServerMsg(socket, currentTopic, username + ' has connected to this topic');
   }
 
-  if (usernames[currentTopic] == null) {
-    usernames[currentTopic] = {};
+  handleUserName(socket, username); 
+}
+
+function handleUserName(socket, username) {
+  var topic = socket.topic;
+  if (socket.username && username != socket.username) {
+    console.log('Changing name from ' + socket.username + ' to ' + username);
+    delete usernames[topic][socket.username];
+  }
+  
+  if (!usernames[topic]) {
+    usernames[topic] = {};
   }
   socket.username = username;
-  usernames[currentTopic][username] = username;
+  usernames[topic][username] = username;
   io.sockets.emit('updateusers', usernames);
 }
 
-function processNewChatMessage(username, topic, msgContent) {
+function processNewChatMessage(socket, msgContent) {
   var timestamp = Date.now(),
-    msg = { 
-    username: username, 
+  msg = { 
+    topicId: socket.topic,
+    username: socket.username, 
     content: msgContent, 
     date: timestamp, 
     asTime: dateUtil.asTime(timestamp) 
   };
-  insertMsgToDb(username, topic, msg);
-  io.sockets.in(topic).emit('updatetopic', msg);
+  db.saveMsg(msg);
+  io.sockets.in(socket.topic).emit('updatetopic', msg);
 }
 
 function validateTopic(topic)  {
@@ -102,10 +113,6 @@ function broadcastServerMsg(socket, currentTopic, usermsg) {
     content: usermsg, 
     asTime: dateUtil.asTime(Date.now())
   });
-}
-
-function insertMsgToDb(user, topicId, msg) {
-  db.messages.save({username: user, topicId: db.ObjectId(topicId), content: msg.content, date: msg.date });
 }
 
 function insertNewTopicToDb(topic) {

@@ -1,0 +1,27 @@
+doctype 5
+html
+  head
+    title Chatty.MB
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='/javascripts/jquery-1.9.1.min.js')
+    script(src='/javascripts/socket.io.min.js')
+    script(src='/javascripts/clientv2.js')
+    block scripts
+
+  body
+    div#header
+      div#logo.headerSubDiv 
+        a(href='/') Chatty.MB v2
+      input#notification(type='button', value='Enable notifications')
+
+      div#nameForm.headerSubDiv
+        input#name(type='text', placeholder="Username")
+        input#saveName(type='button', value='Save Name') 
+
+    br
+
+    div.highlightRow
+      span#root / Root / 
+        block breadcrump
+
+    block content
