@@ -29,6 +29,7 @@ app.configure('development', function (){
 app.get('/', routes.topic);
 app.get('/topic/:id', routes.chat);
 app.get('/v2', routes.main);
+app.get('/messages/:topicId', routes.messagesByTopicId);
 
 server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

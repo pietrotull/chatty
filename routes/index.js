@@ -47,3 +47,11 @@ exports.main = function(req, res) {
       asTime: dateUtil.asTime });
   });
 };
+
+exports.messagesByTopicId = function(req, res) {
+  var topicId = db.ObjectId(req.params.topicId);
+  db.messages.find({ "topicId" : topicId}, function(err, messages) {
+    if(err) return;
+    res.json(messages);
+  });
+}
