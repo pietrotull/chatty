@@ -26,8 +26,8 @@ function bindSocketActions() {
   socket.on('updatetopic', function (msg) {
     updateTopic(msg);
     // displayNotificationIfUnfocused(msg.username, msg.content);
-  });
-}
+  })
+;}
 
 function updateTopic(msg) {
   // console.log('add msg', msg);
@@ -46,6 +46,7 @@ function bindOpenTopicLinks() {
     currentTopicId = topicId;
     $('.topicComments').slideUp(100);
     var commentDiv = $('div#' + topicId + ' div.topicComments');
+    $('.highlightRow').hide();
     populateMessagesToTopic(topicId, commentDiv);
     commentDiv.slideDown(100);
     joinTopic(topicId);
@@ -59,7 +60,6 @@ function joinTopic(topicId) {
 
 function populateMessagesToTopic(topicId, commentDiv, callback) {
   $.getJSON('/messages/' + topicId, function(messages) {
-    console.log('json: ', messages);
     commentDiv.empty();
     $.each( messages, function( key, msg ) {
       addMsgToTopic(commentDiv, msg);
