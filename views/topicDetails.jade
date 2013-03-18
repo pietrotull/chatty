@@ -10,11 +10,3 @@ div(id='#{topic._id}').topicWrapper
     br 
     | #{topic.description}
   div.topicComments
-  div.highlightRow
-    div.profile
-      | [
-      span#clock 00:00
-      | ] 
-      span#username anynomous
-    input(id='msg#{topic._id}',type='text', placeholder="New message")
-    input(id='msgsend#{topic._id}',type='button', value='Send')

@@ -46,6 +46,13 @@ function configure() {
 
 function joinTopic(socket, topic, username) {
   var currentTopic = validateTopic(topic);
+
+  if (socket.topic === currentTopic)
+    return;
+
+  if (socket.topic) {
+    socket.leave(socket.topic);
+  }
   socket.topic = currentTopic;
   socket.join(currentTopic);
   var msg = '';
@@ -54,18 +61,25 @@ function joinTopic(socket, topic, username) {
     console.log('Changing name from ' + socket.username + ' to ' + username);
     delete usernames[currentTopic][socket.username];
   }
-
+/*
   if (!isRoot(currentTopic)) {
     broadcastServerMsg(socket, currentTopic, username + ' has connected to this topic');
   }
-
+*/
   handleUserName(socket, username); 
+}
+
+function hasPreviousTopic(socket, topic) {
+  if(socket.topic) {
+    console.log('prev topic: ' + socket.topic);
+  } else {
+    console.log('no prev topic: ' + socket.topic);
+  }
 }
 
 function handleUserName(socket, username) {
   var topic = socket.topic;
   if (socket.username && username != socket.username) {
-    console.log('Changing name from ' + socket.username + ' to ' + username);
     delete usernames[topic][socket.username];
   }
   
@@ -91,7 +105,6 @@ function processNewChatMessage(socket, msgContent) {
 }
 
 function validateTopic(topic)  {
-  // TODO: check that topicsList contains given topic
   return topic ? topic : rootTopic;
 }
 
