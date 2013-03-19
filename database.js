@@ -1,14 +1,10 @@
 var dbUrl = 'chatty';
-var collections = ['topics', 'messages'];
+var collections = ['topics', 'comments'];
 var db = require('mongojs').connect(dbUrl, collections);
 
-db.saveMsg = function(msg) {
-  db.messages.save({
-  	username: msg.username, 
-  	topicId: db.ObjectId(msg.topicId), 
-  	content: msg.content, 
-  	date: msg.date 
-  });
+db.saveComment = function(comment) {
+  comment['topicId'] = db.ObjectId(comment.topicId);
+  db.comments.save(comment);
 }
 
 module.exports = db;

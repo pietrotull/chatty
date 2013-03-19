@@ -15,13 +15,16 @@ html
       input#notification(type='button', value='Enable notifications')
 
       div#nameForm.headerSubDiv
-        input#name(type='text', placeholder="Username")
-        input#saveName(type='button', value='Save Name') 
+        form
+          input#name(type='text', name='username', placeholder="Username")
+          input#saveName(type='button', value='Save Name') 
 
     br
 
     div.highlightRow
       span#root / Root / 
         block breadcrump
+
+    block template
 
     block content

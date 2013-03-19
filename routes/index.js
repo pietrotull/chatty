@@ -48,9 +48,9 @@ exports.main = function(req, res) {
   });
 };
 
-exports.messagesByTopicId = function(req, res) {
+exports.commentsByTopicId = function(req, res) {
   var topicId = db.ObjectId(req.params.topicId);
-  db.messages.find({ "topicId" : topicId}, function(err, messages) {
+  db.comments.find({ "topicId" : topicId}, function(err, messages) {
     if(err) return;
     res.json(messages);
   });

@@ -11,10 +11,13 @@ div(id='#{topic._id}').topicWrapper
     | #{topic.description}
   div.topicComments
   div.highlightRow
-    div.profile
-      | [
-      span#clock 00:00
-      | ] 
-      span#username anynomous
-    input(id='msg#{topic._id}',type='text', placeholder="New message")
-    input(id='msgsend#{topic._id}',type='button', value='Send')
+    form(name='addnewmsg')
+      div.profile
+        | [
+        span#clock 00:00
+        | ] 
+        span#username anynomous
+      input(name='topicId', type='hidden', value='#{topic._id}')
+      input(name='author', type='hidden', value='Joku')
+      input(type='text', name='comment', placeholder="New message")
+      input(type='button', value='Send')

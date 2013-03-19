@@ -1,5 +1,8 @@
 extends onepagelayout
 
+block template
+  include topicTemplate
+
 block breadcrump
   span Topics (v2)
 
@@ -11,16 +14,17 @@ block content
 
   br
   div#createNewTopic.baseDiv
-    | New topic:
-    br
-    input#topic(placeholder="New topic title")
-    br
-    | Description:
-    br
-    textarea#description(placeholder="Description what this topic is about")
-    br
-    | Author:
-    br
-    input#name(placeholder="Author")
-    br
-    input#submitNewTopic(type='button', value='Save')
+    form(name='addnewtopic')
+      | New topic:
+      br
+      input#topic(name='title', type='text', placeholder='New topic title')
+      br
+      | Description:
+      br
+      textarea#description(name='description', placeholder='Description what this topic is about')
+      br
+      | Author:
+      br
+      input#name(name='author', type='text', placeholder="Author")
+      br
+      input#submitNewTopic(type='button', value='Save')

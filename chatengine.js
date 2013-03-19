@@ -19,6 +19,10 @@ exports.io = function(server) {
       joinTopic(socket, topic, username);
     });
 
+    socket.on('addnewmsg', function (msg) {
+      processNewChatMessage(socket, msg);
+    });
+
     socket.on('sendmsg', function (msg) {
       processNewChatMessage(socket, msg);
     });
@@ -91,17 +95,14 @@ function handleUserName(socket, username) {
   io.sockets.emit('updateusers', usernames);
 }
 
-function processNewChatMessage(socket, msgContent) {
-  var timestamp = Date.now(),
-  msg = { 
-    topicId: socket.topic,
-    username: socket.username, 
-    content: msgContent, 
-    date: timestamp, 
-    asTime: dateUtil.asTime(timestamp) 
-  };
-  db.saveMsg(msg);
-  io.sockets.in(socket.topic).emit('updatetopic', msg);
+function processNewChatMessage(socket, comment) {
+  console.log('new msg');
+  console.log(comment);
+  var timestamp = Date.now();
+  comment['date'] = timestamp;
+  db.saveComment(comment);
+  comment['asTime'] = dateUtil.asTime(timestamp);
+  io.sockets.in(socket.topic).emit('updatetopic', comment);
 }
 
 function validateTopic(topic)  {
