@@ -1,0 +1,25 @@
+div#topicTemplate.topicWrapper.hidden
+  div.topicHeader.topic.baseDiv
+    div.topicAuthor 
+      | Created 
+      span(name='asDate') 
+      | at 
+      span(name='asTime')
+      br
+      | by  
+      span(name='author')
+    b
+      span(name='title')
+    br 
+    | 
+    span(name='description')
+  div.topicComments
+  div.highlightRow
+    form(name='addnewmsg')
+      div.profile
+        | [
+        span(name='clock') 00:00
+        | ] 
+        span#username anynomous
+      input(type='text', name='msg', placeholder="New message")
+      input(type='button', value='Send')
