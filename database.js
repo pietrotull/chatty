@@ -8,4 +8,3 @@ db.saveComment = function(comment) {
 }
 
 module.exports = db;
-

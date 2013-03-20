@@ -12,7 +12,6 @@ $(function(){
   bindSendMessage(socket);
   bindCheckNotificationPermissions();
   focusOnMsgField();
-  setSendChatButton();
   */
 });
 var socket, 
@@ -46,8 +45,6 @@ function hideTopicCommentDivs() {
 function bindOpenTopicLinks(newTopic) {
   var selector = newTopic ? newTopic : 'div.topic';
 
-
-
   $(selector).click(function(event) {
     var topicId = $(event.target).closest('div.topicWrapper').attr('id');
 
@@ -61,7 +58,7 @@ function bindOpenTopicLinks(newTopic) {
       populateMessagesToTopic(topicId, commentDiv);
       commentDiv.show();
       joinTopic(topicId);
-      commentDiv.siblings('div[name="newMsgRow"]').show();      
+      commentDiv.siblings('div[name="newMsgRow"]').show();
     }
   });
 }
@@ -107,7 +104,10 @@ function pad(number) {
 }
 
 function bindSendMessage() {
-  $('input[type="button"]').click(function(event) {
+  var selector = 'input[type="button"]';
+  $(selector).unbind('click');
+  $(selector).click(function(event) {
+    console.log('was klicked');
     var inputFields = $(event.target).siblings('input[type="text"], input[type="hidden"], textarea');
     var msg = {};
     $.each(inputFields, function(key, inputField) {
@@ -127,6 +127,7 @@ function validateInputs(object) {
   $.each(object, function(key, field) {
     if(field == null || field == '' || field == undefined) {
       isValid = false;
+      console.log('Invalid: ', key, field);
       return false;
     } 
     isValid = true;
@@ -137,6 +138,7 @@ function validateInputs(object) {
 function addNewTopic(topic) {
   var newTopic = $('#topicTemplate').clone();
   newTopic.attr('id', topic._id);
+  newTopic.find('input[name="topicId"]').val(topic._id);
 
   // TODO: generic function to set data
   newTopic.find('span[name="author"]').html(topic.author);
@@ -148,10 +150,14 @@ function addNewTopic(topic) {
   $('#topics').append(newTopic);
   newTopic.slideDown();
   bindOpenTopicLinks(newTopic);
+  bindSendMessage();
+  bindEnterSubmitForInputFields();
 }
 
 function bindEnterSubmitForInputFields() {
-  $('input, textarea').keypress(function(e) {
+  var inputFieldSelector = 'input, textarea';
+  inputFieldSelector.unbind('keypress');
+  $(inputFieldSelector).keypress(function(e) {
     if(e.which == 13) {  // Enter -button
       var sisterSubmit = $(this).siblings('[type="button"]');
       $(this).blur();
