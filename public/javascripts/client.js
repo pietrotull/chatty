@@ -125,7 +125,7 @@ function addNewTopicTemplate(topic) {
 function updateTopic(msg) {
   var msgHtml = $(
   '<div class="msg baseDiv hidden">' + 
-  ' <div class="profile"> [' + msg.asTime + '] ' + msg.username + '</div>' + msg.content + 
+  ' <div class="profile"> [' + msg.asTime + '] ' + msg.author + '</div>' + msg.comment + 
   '</div>');
   $('#conversation').append(msgHtml);
   msgHtml.slideDown(200);

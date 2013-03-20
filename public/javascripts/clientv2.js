@@ -5,6 +5,7 @@ $(function(){
   bindSocketActions();
   setNameRowClock();
   bindSendMessage();
+  bindEnterSubmitForInputFields();
   /*
   checkForExistingUsername();
   bindUserNameActions();
@@ -12,7 +13,6 @@ $(function(){
   bindCheckNotificationPermissions();
   focusOnMsgField();
   setSendChatButton();
-  bindEnterSubmitForInputFields();
   */
 });
 var socket, 
@@ -24,11 +24,13 @@ function connectSocket() {
 
 function bindSocketActions() {
   socket.on('updatetopic', function (msg) {
+    console.log('Updating topic');
     updateTopic(msg);
     // displayNotificationIfUnfocused(msg.username, msg.content);
   });
   socket.on('addnewtopic', function(topic) {
     addNewTopic(topic);
+    console.log('Updating topic');
   });
 ;}
 
@@ -38,21 +40,29 @@ function updateTopic(msg) {
 }
 
 function hideTopicCommentDivs() {
-  $('.topicComments, .topicWrapper .highlightRow').hide();
+  $('.topicComments, div[name="newMsgRow"]').hide();
 }
 
 function bindOpenTopicLinks(newTopic) {
   var selector = newTopic ? newTopic : 'div.topic';
+
+
+
   $(selector).click(function(event) {
     var topicId = $(event.target).closest('div.topicWrapper').attr('id');
-    currentTopicId = topicId;
-    $('.topicComments').slideUp(100);
-    var commentDiv = $('div#' + topicId + ' div.topicComments');
-    $('.highlightRow').hide();
-    populateMessagesToTopic(topicId, commentDiv);
-    commentDiv.slideDown(100);
-    joinTopic(topicId);
-    commentDiv.siblings('.highlightRow').show();
+
+    if (currentTopicId == topicId) {
+      console.log('Same topic');
+      // toggle like? join root?
+    } else {
+      currentTopicId = topicId;
+      $('.topicComments, div[name="newMsgRow"]').hide();
+      var commentDiv = $('div#' + topicId + ' div.topicComments');
+      populateMessagesToTopic(topicId, commentDiv);
+      commentDiv.show();
+      joinTopic(topicId);
+      commentDiv.siblings('div[name="newMsgRow"]').show();      
+    }
   });
 }
 
@@ -104,9 +114,9 @@ function bindSendMessage() {
       var field = $(inputField);
       msg[field.attr('name')] = field.val();
     });
-    var action = $(event.target).parent('form').attr('name');
+    var action = $(event.target).parent('div.form').attr('name');
     if (validateInputs(msg)) {
-      console.log('sending out: ', msg);
+      console.log('sending out: ' + action, msg);
       socket.emit(action, msg);
     }
   });
@@ -138,4 +148,14 @@ function addNewTopic(topic) {
   $('#topics').append(newTopic);
   newTopic.slideDown();
   bindOpenTopicLinks(newTopic);
+}
+
+function bindEnterSubmitForInputFields() {
+  $('input, textarea').keypress(function(e) {
+    if(e.which == 13) {  // Enter -button
+      var sisterSubmit = $(this).siblings('[type="button"]');
+      $(this).blur();
+      sisterSubmit.focus().click();     
+    }
+  });
 }

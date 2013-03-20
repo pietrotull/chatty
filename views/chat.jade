@@ -12,10 +12,10 @@ block content
     ul#users
 
   div#conversation
-    each msg, i in messages
+    each msg, i in comments
       div.msg.baseDiv
-        div.profile [#{asTime(msg.date)}] #{msg.username} 
-        | #{msg.content}
+        div.profile [#{asTime(msg.date)}] #{msg.author} 
+        | #{msg.comment}
 
   div.highlightRow
     div.profile

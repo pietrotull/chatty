@@ -10,13 +10,13 @@ exports.chat = function(req, res) {
       return;
     }
 
-    db.messages.find({ "topicId" : topicId},function(err, messages) {
+    db.comments.find({ "topicId" : topicId}, function(err, comments) {
       if(err) {
         console.log('2Err: ', err);
         return;
       } 
       res.render('chat', { topic: topic, 
-        messages: messages, 
+        comments: comments, 
         asDate: dateUtil.asDate, 
         asTime: dateUtil.asTime });
     });  

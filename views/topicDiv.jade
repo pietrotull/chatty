@@ -10,8 +10,8 @@ div(id='#{topic._id}').topicWrapper
     br 
     | #{topic.description}
   div.topicComments
-  div.highlightRow
-    form(name='addnewmsg')
+  div.highlightRow(name='newMsgRow')
+    div.form(name='addnewmsg')
       div.profile
         | [
         span#clock 00:00
@@ -19,5 +19,5 @@ div(id='#{topic._id}').topicWrapper
         span#username anynomous
       input(name='topicId', type='hidden', value='#{topic._id}')
       input(name='author', type='hidden', value='Joku')
-      input(type='text', name='comment', placeholder="New message")
+      input(name='comment', type='text', placeholder="New message")
       input(type='button', value='Send')

@@ -14,12 +14,14 @@ div#topicTemplate.topicWrapper.hidden
     | 
     span(name='description')
   div.topicComments
-  div.highlightRow
-    form(name='addnewmsg')
+  div.highlightRow(name='newMsgRow')
+    div.form(name='addnewmsg')
       div.profile
         | [
         span(name='clock') 00:00
         | ] 
         span#username anynomous
-      input(type='text', name='msg', placeholder="New message")
+      input(name='topicId', type='hidden', value='')
+      input(name='author', type='hidden', value='Joku')
+      input(name='comment', type='text', placeholder="New message")
       input(type='button', value='Send')
