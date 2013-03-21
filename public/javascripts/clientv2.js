@@ -33,25 +33,22 @@ function bindSocketActions() {
   });
 ;}
 
-function updateTopic(msg) {
+function updateTopic(comment) {
   var commentDiv = $('div#' + currentTopicId + ' div.topicComments');
-  addMsgToTopic(commentDiv, msg);
+  addMsgToTopic(commentDiv, comment).slideDown(100);
 }
 
 function hideTopicCommentDivs() {
   $('.topicComments, div[name="newMsgRow"]').hide();
 }
 
-function bindOpenTopicLinks(newTopic) {
-  var selector = newTopic ? newTopic : 'div.topic';
+function bindOpenTopicLinks() {
 
-  $(selector).click(function(event) {
+  var topics = $('div.topic');
+  topics.unbind('click');
+  topics.click(function(event) {
     var topicId = $(event.target).closest('div.topicWrapper').attr('id');
-
-    if (currentTopicId == topicId) {
-      console.log('Same topic');
-      // toggle like? join root?
-    } else {
+    if (!(currentTopicId == topicId)) {
       currentTopicId = topicId;
       $('.topicComments, div[name="newMsgRow"]').hide();
       var commentDiv = $('div#' + topicId + ' div.topicComments');
@@ -71,15 +68,20 @@ function populateMessagesToTopic(topicId, commentDiv, callback) {
   $.getJSON('/messages/' + topicId, function(messages) {
     commentDiv.empty();
     $.each(messages, function(key, msg) {
-      addMsgToTopic(commentDiv, msg);
+      console.log('adding: ' + key);
+      addMsgToTopic(commentDiv, msg).removeClass('hidden');
     });
+    console.log('out of each: ', commentDiv.html());
+    commentDiv.slideDown();
   });
 }
 
 function addMsgToTopic(commentDiv, comment) {
   var html = getMsgHtml(comment);
   commentDiv.append(html);
-  html.slideDown(100);
+  // console.log('slide: ', comment);
+  // html.slideDown(100); // double slide down problem
+  return html;
 }
 
 function getMsgHtml(msg) {
@@ -107,7 +109,6 @@ function bindSendMessage() {
   var selector = 'input[type="button"]';
   $(selector).unbind('click');
   $(selector).click(function(event) {
-    console.log('was klicked');
     var inputFields = $(event.target).siblings('input[type="text"], input[type="hidden"], textarea');
     var msg = {};
     $.each(inputFields, function(key, inputField) {
@@ -127,7 +128,6 @@ function validateInputs(object) {
   $.each(object, function(key, field) {
     if(field == null || field == '' || field == undefined) {
       isValid = false;
-      console.log('Invalid: ', key, field);
       return false;
     } 
     isValid = true;
@@ -149,15 +149,15 @@ function addNewTopic(topic) {
 
   $('#topics').append(newTopic);
   newTopic.slideDown();
-  bindOpenTopicLinks(newTopic);
+  bindOpenTopicLinks();
   bindSendMessage();
   bindEnterSubmitForInputFields();
 }
 
 function bindEnterSubmitForInputFields() {
-  var inputFieldSelector = 'input, textarea';
-  inputFieldSelector.unbind('keypress');
-  $(inputFieldSelector).keypress(function(e) {
+  var inputFieldsSelector = $('input, textarea');
+  inputFieldsSelector.unbind('keypress');
+  inputFieldsSelector.keypress(function(e) {
     if(e.which == 13) {  // Enter -button
       var sisterSubmit = $(this).siblings('[type="button"]');
       $(this).blur();

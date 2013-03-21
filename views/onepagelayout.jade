@@ -14,10 +14,9 @@ html
         a(href='/') Chatty.MB v2
       input#notification(type='button', value='Enable notifications')
 
-      div#nameForm.headerSubDiv
-        form(name='setname')
-          input#name(type='text', name='username', placeholder="Username")
-          input#saveName(type='button', value='Save Name') 
+      div#nameForm.headerSubDiv.form(name='setname')
+        input#name(type='text', name='username', placeholder="Username")
+        input#saveName(type='button', value='Save Name') 
 
     br
 

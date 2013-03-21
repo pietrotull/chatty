@@ -27,12 +27,30 @@ exports.io = function(server) {
       processNewChatMessage(socket, msg);
     });
 
+    socket.on('setname', function(username) {
+      console.log('setting name to: ', username);
+      setUsername(socket, username.username);
+    });
+
     socket.on('disconnect', function() {
       disconnectUser(socket);
     });
   });
 };
 
+function setUsername(socket, username) {
+  var topic = socket.topic;
+  if (socket.username && username != socket.username) {
+    delete usernames[topic][socket.username];
+  }
+  
+  if (!usernames[topic]) {
+    usernames[topic] = {};
+  }
+  socket.username = username;
+  usernames[topic][username] = username;
+  io.sockets.emit('updateusers', usernames);
+}
 
 function addNewTopic(topic) {
   insertNewTopicToDb(topic);
@@ -65,39 +83,11 @@ function joinTopic(socket, topic, username) {
     console.log('Changing name from ' + socket.username + ' to ' + username);
     delete usernames[currentTopic][socket.username];
   }
-/*
-  if (!isRoot(currentTopic)) {
-    broadcastServerMsg(socket, currentTopic, username + ' has connected to this topic');
-  }
-*/
-  handleUserName(socket, username); 
-}
-
-function hasPreviousTopic(socket, topic) {
-  if(socket.topic) {
-    console.log('prev topic: ' + socket.topic);
-  } else {
-    console.log('no prev topic: ' + socket.topic);
-  }
-}
-
-function handleUserName(socket, username) {
-  var topic = socket.topic;
-  if (socket.username && username != socket.username) {
-    delete usernames[topic][socket.username];
-  }
-  
-  if (!usernames[topic]) {
-    usernames[topic] = {};
-  }
-  socket.username = username;
-  usernames[topic][username] = username;
-  io.sockets.emit('updateusers', usernames);
+  setUsername(socket, username); 
 }
 
 function processNewChatMessage(socket, comment) {
-  console.log('new msg');
-  console.log(comment);
+  console.log('addnewmsg');
   var timestamp = Date.now();
   comment['date'] = timestamp;
   db.saveComment(comment);
