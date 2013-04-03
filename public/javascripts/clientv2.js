@@ -38,6 +38,11 @@ function updateUsers(usernames) {
   });
   */
   console.log(usernames[currentTopicId]);
+  $('.onlineUsers ul').empty();
+  $.each(usernames[currentTopicId], function(key, name) {
+    console.log('adding' + key);
+    $('.onlineUsers ul').append('<li>' + key + '</li>');
+  });
 }
 
 function updateTopic(comment) {
@@ -56,12 +61,12 @@ function bindOpenTopicLinks() {
     var topicId = $(event.target).closest('div.topicWrapper').attr('id');
     if (!(currentTopicId == topicId)) {
       currentTopicId = topicId;
-      $('.topicComments, div[name="newMsgRow"]').hide();
+      $('.topicComments, div[name="newMsgRow"], div.onlineUsers').hide();
       var commentDiv = $('div#' + topicId + ' div.topicComments');
       populateMessagesToTopic(topicId, commentDiv);
       commentDiv.show();
       joinTopic(topicId);
-      commentDiv.siblings('div[name="newMsgRow"]').show();
+      commentDiv.siblings('div[name="newMsgRow"], div.onlineUsers').show();
     }
   });
 }
