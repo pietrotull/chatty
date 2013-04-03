@@ -6,10 +6,9 @@ $(function(){
   setNameRowClock();
   bindSendMessage();
   bindEnterSubmitForInputFields();
-  /*
   checkForExistingUsername();
   bindUserNameActions();
-  bindSendMessage(socket);
+  /*
   bindCheckNotificationPermissions();
   focusOnMsgField();
   */
@@ -162,6 +161,24 @@ function bindEnterSubmitForInputFields() {
       var sisterSubmit = $(this).siblings('[type="button"]');
       $(this).blur();
       sisterSubmit.focus().click();     
+    }
+  });
+}
+
+function checkForExistingUsername() {
+  var user = localStorage['username'];
+  if (user) {
+    $('input#name').val(user);
+  }
+}
+
+function bindUserNameActions() {
+  $('input#saveName').click(function() {
+    username = $('input#name').val();
+    console.log('save name: ' + username);
+    if (username) {
+      localStorage['username'] = username;
+      checkForExistingUsername();
     }
   });
 }

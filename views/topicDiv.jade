@@ -3,7 +3,7 @@ div(id='#{topic._id}').topicWrapper
     div.topicAuthor 
       | Created #{asDate(topic.date)} at #{asTime(topic.date)}
       br
-      | by #{topic.name}
+      | by #{topic.author}
     b #{topic.title}  
     br 
     | #{topic.description}

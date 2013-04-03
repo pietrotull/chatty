@@ -87,7 +87,6 @@ function joinTopic(socket, topic, username) {
 }
 
 function processNewChatMessage(socket, comment) {
-  console.log('addnewmsg');
   var timestamp = Date.now();
   comment['date'] = timestamp;
   db.saveComment(comment);
