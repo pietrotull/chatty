@@ -24,7 +24,6 @@ function bindSocketActions() {
   });
   socket.on('addnewtopic', function(topic) {
     addNewTopic(topic);
-    console.log('Updating topic');
   });
   socket.on('updateusers', function(usernames) {
     updateUsers(usernames);
@@ -32,15 +31,8 @@ function bindSocketActions() {
 }
 
 function updateUsers(usernames) {
-  /*
-  $.each(usernames, function(key, name) {
-    console.log('key: ' + key + ' names: ', name);
-  });
-  */
-  console.log(usernames[currentTopicId]);
   $('.onlineUsers ul').empty();
   $.each(usernames[currentTopicId], function(key, name) {
-    console.log('adding' + key);
     $('.onlineUsers ul').append('<li>' + key + '</li>');
   });
 }

@@ -95,7 +95,6 @@ function processNewChatMessage(socket, comment) {
   var timestamp = Date.now();
   comment['date'] = timestamp;
   comment['author'] = socket.username;
-  console.log(comment);
   db.saveComment(comment);
   comment['asTime'] = dateUtil.asTime(timestamp);
   io.sockets.in(socket.topic).emit('updatetopic', comment);

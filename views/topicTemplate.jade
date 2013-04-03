@@ -13,6 +13,8 @@ div#topicTemplate.topicWrapper.hidden
     br 
     | 
     span(name='description')
+  div.onlineUsers.baseDiv.hidden
+    ul    
   div.topicComments
   div.highlightRow(name='newMsgRow')
     div.form(name='addnewmsg')
@@ -20,7 +22,7 @@ div#topicTemplate.topicWrapper.hidden
         | [
         span(name='clock') 00:00
         | ] 
-        span#username anynomous
+        span#name Anonimo
       input(name='topicId', type='hidden', value='jokutopicid')
       input(name='author', type='hidden', value='Anonymous')
       input(name='comment', type='text', placeholder="New message")
