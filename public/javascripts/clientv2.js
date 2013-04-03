@@ -8,21 +8,17 @@ $(function(){
   bindEnterSubmitForInputFields();
   checkForExistingUsername();
   bindUserNameActions();
-  /*
-  bindCheckNotificationPermissions();
-  focusOnMsgField();
-  */
 });
 var socket, 
   currentTopicId = 'root';
 
 function connectSocket() {
   socket = io.connect(window.location.hostname);
+  joinTopic(currentTopicId);
 }
 
 function bindSocketActions() {
   socket.on('updatetopic', function (msg) {
-    console.log('Updating topic');
     updateTopic(msg);
     // displayNotificationIfUnfocused(msg.username, msg.content);
   });
@@ -30,7 +26,19 @@ function bindSocketActions() {
     addNewTopic(topic);
     console.log('Updating topic');
   });
-;}
+  socket.on('updateusers', function(usernames) {
+    updateUsers(usernames);
+  });
+}
+
+function updateUsers(usernames) {
+  /*
+  $.each(usernames, function(key, name) {
+    console.log('key: ' + key + ' names: ', name);
+  });
+  */
+  console.log(usernames[currentTopicId]);
+}
 
 function updateTopic(comment) {
   var commentDiv = $('div#' + currentTopicId + ' div.topicComments');
@@ -42,7 +50,6 @@ function hideTopicCommentDivs() {
 }
 
 function bindOpenTopicLinks() {
-
   var topics = $('div.topic');
   topics.unbind('click');
   topics.click(function(event) {
@@ -60,17 +67,15 @@ function bindOpenTopicLinks() {
 }
 
 function joinTopic(topicId) {
-  socket.emit('jointopic', topicId, 'TempUserName');
+  socket.emit('jointopic', topicId, localStorage['username']);
 }
 
 function populateMessagesToTopic(topicId, commentDiv, callback) {
   $.getJSON('/messages/' + topicId, function(messages) {
     commentDiv.empty();
     $.each(messages, function(key, msg) {
-      console.log('adding: ' + key);
       addMsgToTopic(commentDiv, msg).removeClass('hidden');
     });
-    console.log('out of each: ', commentDiv.html());
     commentDiv.slideDown();
   });
 }
@@ -78,8 +83,6 @@ function populateMessagesToTopic(topicId, commentDiv, callback) {
 function addMsgToTopic(commentDiv, comment) {
   var html = getMsgHtml(comment);
   commentDiv.append(html);
-  // console.log('slide: ', comment);
-  // html.slideDown(100); // double slide down problem
   return html;
 }
 
@@ -176,7 +179,6 @@ function checkForExistingUsername() {
 function bindUserNameActions() {
   $('input#saveName').click(function() {
     username = $('input#name').val();
-    console.log('save name: ' + username);
     if (username) {
       localStorage['username'] = username;
       checkForExistingUsername();

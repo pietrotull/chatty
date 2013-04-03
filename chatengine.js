@@ -28,7 +28,7 @@ exports.io = function(server) {
     });
 
     socket.on('setname', function(username) {
-      console.log('setting name to: ', username);
+      console.log('DEBUG::setting name to: ', username);
       setUsername(socket, username.username);
     });
 
@@ -39,13 +39,18 @@ exports.io = function(server) {
 };
 
 function setUsername(socket, username) {
+  console.log('DEBUG::SetUsername: ' + username + ', ' + JSON.stringify(usernames));
   var topic = socket.topic;
+  if (!usernames[topic]) {
+    usernames[topic] = {};
+  }
   if (socket.username && username != socket.username) {
     delete usernames[topic][socket.username];
   }
   socket.username = username;
   usernames[topic][username] = username;
   io.sockets.emit('updateusers', usernames);
+  console.log('DEBUG::usernames sent: ' + JSON.stringify(usernames));
 }
 
 function addNewTopic(topic) {
@@ -62,27 +67,35 @@ function configure() {
   });
 }
 
-function joinTopic(socket, topic) {
+function joinTopic(socket, topic, username) {
   var currentTopic = validateTopic(topic);
   if (socket.topic === currentTopic)
     return;
 
   if (socket.topic) {
+    console.log('leaving: ' + socket.topic);
     socket.leave(socket.topic);
+    console.log('remove: ' + socket.username);
+    delete usernames[socket.topic][socket.username];
   }
+  socket.username = username;
   socket.topic = currentTopic;
   socket.join(currentTopic);
 
   // Create username for topic if none exists
-  if (!usernames[topic]) {
-    usernames[topic] = {};
+  console.log('DEBUG::Joining topic: ' + JSON.stringify(usernames));
+  if (!usernames[currentTopic]) {
+    usernames[currentTopic] = {};
   }
+  usernames[currentTopic][username] = username;
   io.sockets.emit('updateusers', usernames);
 }
 
 function processNewChatMessage(socket, comment) {
   var timestamp = Date.now();
   comment['date'] = timestamp;
+  comment['author'] = socket.username;
+  console.log(comment);
   db.saveComment(comment);
   comment['asTime'] = dateUtil.asTime(timestamp);
   io.sockets.in(socket.topic).emit('updatetopic', comment);
