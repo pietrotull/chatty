@@ -169,6 +169,7 @@ function checkForExistingUsername() {
   var user = localStorage['username'];
   if (user) {
     $('input#name').val(user);
+    $('span#name').html(user);
   }
 }
 

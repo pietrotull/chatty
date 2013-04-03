@@ -43,10 +43,6 @@ function setUsername(socket, username) {
   if (socket.username && username != socket.username) {
     delete usernames[topic][socket.username];
   }
-  
-  if (!usernames[topic]) {
-    usernames[topic] = {};
-  }
   socket.username = username;
   usernames[topic][username] = username;
   io.sockets.emit('updateusers', usernames);
@@ -66,9 +62,8 @@ function configure() {
   });
 }
 
-function joinTopic(socket, topic, username) {
+function joinTopic(socket, topic) {
   var currentTopic = validateTopic(topic);
-
   if (socket.topic === currentTopic)
     return;
 
@@ -77,13 +72,12 @@ function joinTopic(socket, topic, username) {
   }
   socket.topic = currentTopic;
   socket.join(currentTopic);
-  var msg = '';
 
-  if (socket.username && username != socket.username) {
-    console.log('Changing name from ' + socket.username + ' to ' + username);
-    delete usernames[currentTopic][socket.username];
+  // Create username for topic if none exists
+  if (!usernames[topic]) {
+    usernames[topic] = {};
   }
-  setUsername(socket, username); 
+  io.sockets.emit('updateusers', usernames);
 }
 
 function processNewChatMessage(socket, comment) {
