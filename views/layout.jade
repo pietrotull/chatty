@@ -11,11 +11,11 @@ html
   body
     div#header
       div#logo.headerSubDiv 
-        a(href='/') Chatty.MB
+        a(href='/') Chatty.MB v2
       input#notification(type='button', value='Enable notifications')
 
-      div#nameForm.headerSubDiv
-        input#name(type='text', placeholder="Username")
+      div#nameForm.headerSubDiv.form(name='setname')
+        input#name(type='text', name='username', placeholder="Username")
         input#saveName(type='button', value='Save Name') 
 
     br
@@ -23,5 +23,7 @@ html
     div.highlightRow
       span#root / Root / 
         block breadcrump
+
+    block template
 
     block content

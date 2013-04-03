@@ -1,166 +1,170 @@
 $(function(){
   connectSocket();
-  checkForExistingUsername();
+  hideTopicCommentDivs();
+  bindOpenTopicLinks();
   bindSocketActions();
-  bindUserNameActions();
-  bindSendMessage(socket);
-  bindCheckNotificationPermissions();
-  focusOnMsgField();
-  setSendChatButton();
-  bindAddNewTopic();
-  bindTopicLinks();
+  setNameRowClock();
+  bindSendMessage();
   bindEnterSubmitForInputFields();
-  setNameRowClock(); // update once a minute
+  checkForExistingUsername();
+  bindUserNameActions();
 });
-
-var username = '',
-    topic = '',
-    socket;
+var socket, 
+  currentTopicId = 'root';
 
 function connectSocket() {
   socket = io.connect(window.location.hostname);
+  joinTopic(currentTopicId);
 }
 
 function bindSocketActions() {
   socket.on('updatetopic', function (msg) {
     updateTopic(msg);
-    displayNotificationIfUnfocused(msg.username, msg.content);
+    // displayNotificationIfUnfocused(msg.username, msg.content);
   });
-
   socket.on('addnewtopic', function(topic) {
-    addNewTopicTemplate(topic);
+    addNewTopic(topic);
+    console.log('Updating topic');
   });
-
-  socket.on('updateusers', function(users) {
-    updateUsers(users);
-  });
-}
-
-function joinTopic() {
-  setSendChatButton();
-  topic = $('span.hidden').attr('id'); // what if we go to topic view?
-  socket.emit('jointopic', topic, username); //prompt('What is your name?')
-  $('span#username').html(username);
-}
-
-function checkForExistingUsername() {
-  username = localStorage['username'];
-  if (isValidUsername(username)) {
-    $('input#name').val(username);
-    joinTopic();
-  }
-}
-
-function bindUserNameActions() {
-  $('input#saveName').click( function()  {
-    username = $('input#name').val();
-    validateInputs(this, function() {
-      localStorage['username'] = username;
-      joinTopic();      
-    }, displayFlashMsg);
+  socket.on('updateusers', function(usernames) {
+    updateUsers(usernames);
   });
 }
 
-function setSendChatButton() {
-  if(isValidUsername(username)) {
-    $('input#msgsend').removeAttr('disabled');
-  } else {
-    $('input#msgsend').attr('disabled', 'disabled');
-  }
-}
-
-function isValidUsername(username) {
-  return username !== null && username !== undefined && username !== '';
-}
-
-function bindCheckNotificationPermissions() {
-  $('#notification').click( function() {
-    checkNotificationPermissions();
+function updateUsers(usernames) {
+  /*
+  $.each(usernames, function(key, name) {
+    console.log('key: ' + key + ' names: ', name);
+  });
+  */
+  console.log(usernames[currentTopicId]);
+  $('.onlineUsers ul').empty();
+  $.each(usernames[currentTopicId], function(key, name) {
+    console.log('adding' + key);
+    $('.onlineUsers ul').append('<li>' + key + '</li>');
   });
 }
 
-function checkNotificationPermissions() {
-  if (!window.webkitNotifications.checkPermission() == 0) { // 0 is PERMISSION_ALLOWED
-    window.webkitNotifications.requestPermission();
-  }  
+function updateTopic(comment) {
+  var commentDiv = $('div#' + currentTopicId + ' div.topicComments');
+  addMsgToTopic(commentDiv, comment).slideDown(100);
 }
 
-function displayNotificationIfUnfocused(title, msg) {
-  if (!document.hasFocus()) {
-    createNewMessageNotification(title, msg);
-  }
+function hideTopicCommentDivs() {
+  $('.topicComments, div[name="newMsgRow"]').hide();
 }
 
-// hard coded notificition icon for moment
-function createNewMessageNotification(title, content) {
-  notification = window.webkitNotifications.createNotification(
-        'http://upload.wikimedia.org/wikipedia/en/thumb/a/ac/Zorroandbernardo.jpg/250px-Zorroandbernardo.jpg', 
-        title, 
-        content);
-  notification.show();
-  setTimeout(function(){
-    notification.cancel()
-  }, 5000);
+function bindOpenTopicLinks() {
+  var topics = $('div.topic');
+  topics.unbind('click');
+  topics.click(function(event) {
+    var topicId = $(event.target).closest('div.topicWrapper').attr('id');
+    if (!(currentTopicId == topicId)) {
+      currentTopicId = topicId;
+      $('.topicComments, div[name="newMsgRow"], div.onlineUsers').hide();
+      var commentDiv = $('div#' + topicId + ' div.topicComments');
+      populateMessagesToTopic(topicId, commentDiv);
+      commentDiv.show();
+      joinTopic(topicId);
+      commentDiv.siblings('div[name="newMsgRow"], div.onlineUsers').show();
+    }
+  });
 }
 
-function focusOnMsgField() {
-  $('#msg').focus();
+function joinTopic(topicId) {
+  socket.emit('jointopic', topicId, localStorage['username']);
 }
 
-function addNewTopicTemplate(topic) {
-  var topicHtml = 
-  '<div id="' + topic._id + '" class="topic baseDiv hidden">' +
-  ' <div class="topicAuthor">Created ' + topic.asDate + ' at ' + 
-      topic.asTime + '<br/>' + 
-  '   By ' + topic.name +   
-  ' </div>' + 
-  ' <b>' + topic.title + '</b><br/>' +
-      topic.description + 
-  '</div>';
-  $('#topics').append(topicHtml);
-  var selector = 'div#'+topic._id;
-  $(selector).slideDown();
+function populateMessagesToTopic(topicId, commentDiv, callback) {
+  $.getJSON('/messages/' + topicId, function(messages) {
+    commentDiv.empty();
+    $.each(messages, function(key, msg) {
+      addMsgToTopic(commentDiv, msg).removeClass('hidden');
+    });
+    commentDiv.slideDown();
+  });
 }
 
-function updateTopic(msg) {
-  var msgHtml = $(
-  '<div class="msg baseDiv hidden">' + 
-  ' <div class="profile"> [' + msg.asTime + '] ' + msg.author + '</div>' + msg.comment + 
-  '</div>');
-  $('#conversation').append(msgHtml);
-  msgHtml.slideDown(200);
+function addMsgToTopic(commentDiv, comment) {
+  var html = getMsgHtml(comment);
+  commentDiv.append(html);
+  return html;
+}
+
+function getMsgHtml(msg) {
+  return $(
+    '<div class="msg baseDiv hidden">' + 
+    ' <div class="profile"> [' + getPaddedTime(msg.date) + '] ' + msg.author + '</div>' + msg.comment + 
+    '</div>');
 };
 
-function updateUsers(users) {
-  if (topic) {
-    var usersOnlineInThisTopic = users[topic];
-    $('#users').empty();
-    $.each(usersOnlineInThisTopic, function(key, value) {
-      $('#users').append('<li>' + key + '</li>');
-    });
-  } 
+function getPaddedTime(timestamp) {
+  var now = new Date(timestamp);
+  return pad(now.getHours()) + ':' + pad(now.getMinutes());
 }
 
-function bindTopicLinks() {
-  $('div.topic').click(function(element) {
-    var topicId = element.target.id;
-    if (topicId == null || topicId == '' || topicId == undefined) { // if clicks msg title
-      var topicId = element.target.parentNode.id;
-    }
-    window.location = '/topic/' + topicId;
-  });
-}
-
-// update once a minute the clock on new msg row
 function setNameRowClock() {
-  var now = new Date(),
-    time = pad(now.getHours()) + ':' + pad(now.getMinutes())  ;
-  $('#clock').html(time);
+  $('[name="clock"]').html(getPaddedTime(Date.now()));
   setInterval(setNameRowClock, 60 * 1000);
 }
 
+function pad(number) {
+  return (1e15+number+"").slice(-2);
+}
+
+function bindSendMessage() {
+  var selector = 'input[type="button"]';
+  $(selector).unbind('click');
+  $(selector).click(function(event) {
+    var inputFields = $(event.target).siblings('input[type="text"], input[type="hidden"], textarea');
+    var msg = {};
+    $.each(inputFields, function(key, inputField) {
+      var field = $(inputField);
+      msg[field.attr('name')] = field.val();
+    });
+    var action = $(event.target).parent('div.form').attr('name');
+    if (validateInputs(msg)) {
+      console.log('sending out: ' + action, msg);
+      socket.emit(action, msg);
+    }
+  });
+}
+
+function validateInputs(object) {
+  var isValid = false;
+  $.each(object, function(key, field) {
+    if(field == null || field == '' || field == undefined) {
+      isValid = false;
+      return false;
+    } 
+    isValid = true;
+  });
+  return isValid;
+}
+
+function addNewTopic(topic) {
+  var newTopic = $('#topicTemplate').clone();
+  newTopic.attr('id', topic._id);
+  newTopic.find('input[name="topicId"]').val(topic._id);
+
+  // TODO: generic function to set data
+  newTopic.find('span[name="author"]').html(topic.author);
+  newTopic.find('span[name="title"]').html(topic.title);
+  newTopic.find('span[name="description"]').html(topic.description);
+  newTopic.find('span[name="asTime"]').html(topic.asTime);
+  newTopic.find('span[name="asDate"]').html(topic.asDate);
+
+  $('#topics').append(newTopic);
+  newTopic.slideDown();
+  bindOpenTopicLinks();
+  bindSendMessage();
+  bindEnterSubmitForInputFields();
+}
+
 function bindEnterSubmitForInputFields() {
-  $('input, textarea').keypress(function(e) {
+  var inputFieldsSelector = $('input, textarea');
+  inputFieldsSelector.unbind('keypress');
+  inputFieldsSelector.keypress(function(e) {
     if(e.which == 13) {  // Enter -button
       var sisterSubmit = $(this).siblings('[type="button"]');
       $(this).blur();
@@ -169,49 +173,20 @@ function bindEnterSubmitForInputFields() {
   });
 }
 
-function displayFlashMsg(field) {
-  console.log('validation error' + field); // show error some where
-  $(field).addClass('error');
+function checkForExistingUsername() {
+  var user = localStorage['username'];
+  if (user) {
+    $('input#name').val(user);
+    $('span#name').html(user);
+  }
 }
 
-function validateInputs(button, success, failure) {
-  $('textarea, input').removeClass('error'); // remove previous errors
-  var fields = $(button).siblings('textarea, input[type="text"]');
-  $.each(fields, function(key, field) {
-    var value = $(field).val();
-    if(value == null || value == '' || value == undefined) {
-      failure(field);
-      return;
+function bindUserNameActions() {
+  $('input#saveName').click(function() {
+    username = $('input#name').val();
+    if (username) {
+      localStorage['username'] = username;
+      checkForExistingUsername();
     }
-    success(button);
-    return;
-  });
-}
-
-function pad(number) {
-  return (1e15+number+"").slice(-2);
-}
-
-function bindSendMessage(socket) {
-  $('#msgsend').click(function() {
-    validateInputs('#msgsend', function() {
-      var message = $('#msg').val();
-      $('#msg').val('');
-      socket.emit('sendmsg', message);
-    }, displayFlashMsg);
-  });
-}
-
-function bindAddNewTopic() {
-  $('input#submitNewTopic').click(function() {
-    var topic = {};
-    topic.title = $('input#topic').val();
-    topic.description = $('textarea#description').val();
-    topic.name = $('input#name').val();
-    validateInputs('input#submitNewTopic', function() {
-      socket.emit('addnewtopic', topic);
-      $('input#topic').val('');
-      $('textarea#description').val('');
-    }, displayFlashMsg);
   });
 }

@@ -26,9 +26,7 @@ app.configure('development', function (){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.topic);
-app.get('/topic/:id', routes.chat);
-app.get('/v2', routes.main);
+app.get('/', routes.main);
 app.get('/messages/:topicId', routes.commentsByTopicId);
 
 server = http.createServer(app).listen(app.get('port'), function(){
